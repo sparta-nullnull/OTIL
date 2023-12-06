@@ -29,8 +29,8 @@ public class CommentController {
     }
 
     // 댓글 작성
-    // postId       TIL Id
-    // userId       사용자 Id
+    // postId       TIL ID
+    // userId       사용자 ID
     // requestDto   댓글 작성 요청 정보
     // return       ResponseEntity<CommentResponseDto>
     //              작성된 댓글과 HTTP 상태 코드 반환
@@ -45,7 +45,7 @@ public class CommentController {
     }
 
     // 특정 게시물의 댓글 목록 조회
-    // postId       TIL Id
+    // postId       TIL ID
     // return       ResponseEntity<List<CommentResponseDto>>
     //              댓글 목록과 HTTP 상태 코드 반환
     @GetMapping
@@ -55,8 +55,8 @@ public class CommentController {
     }
 
     // 댓글 수정
-    // postId       TIL Id
-    // commentId    댓글 Id
+    // postId       TIL ID
+    // commentId    댓글 ID
     // requestDto   수정할 댓글 정보
     // return       ResponseEntity<CommentResponseDto>
     //              수정된 댓글과 HTTP 상태 코드 반환
@@ -71,8 +71,8 @@ public class CommentController {
     }
 
     // 댓글 삭제
-    // postId       TIL Id
-    // commentId    댓글 Id
+    // postId       TIL ID
+    // commentId    댓글 ID
     // return       ResponseEntity<Void> HTTP 상태 코드 반환
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(

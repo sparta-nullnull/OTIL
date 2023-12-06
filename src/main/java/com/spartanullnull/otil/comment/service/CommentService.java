@@ -8,30 +8,23 @@ import com.spartanullnull.otil.post.entity.Post;
 import com.spartanullnull.otil.user.entity.User;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    @Autowired
-    public CommentService(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository) {
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
-    }
-
+    // 댓글 작성 기능
     // postId       작성된 댓글이 속한 TIL의 Id
     // userId       댓글을 작성한 사용자의 Id
     // requestDto   댓글 작성 요청 Dto
     // return       작성된 댓글의 응답 Dto
-
-    // 댓글 작성 기능
     @Transactional
     public CommentResponseDto createComment(Long postId, Long userId, CommentRequestDto requestDto) {
         // 댓글 작성자 및 게시물 확인
@@ -40,20 +33,20 @@ public class CommentService {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("TIL을 찾을 수 없습니다."));
 
-        // 새로운 댓글 생성
-        Comment comment = new Comment();
-        comment.setCommentText(requestDto.getCommentText());
-        comment.setUser(user);
-        comment.setPost(post);
+        Comment comment = Comment.builder()
+            .commentText(requestDto.getCommentText())
+            .user(user)
+            .post(post)
+            .build();
 
         Comment savedComment = commentRepository.save(comment);
 
         return CommentResponseDto.fromEntity(savedComment);
     }
 
+    // 특정 게시글에 대한 댓글 목록 조회 기능
     // PostId       조회할 댓글이 속한 TIL의 Id
     // return       댓글 목록의 응답 Dto 리스트
-    // 특정 게시글에 대한 댓글 목록 조회 기능
     public List<CommentResponseDto> getCommentsByPostId(Long postId) {
         // 특정 게시물에 대한 댓글 목록 조회
         List<Comment> comments = commentRepository.findByPostId(postId);
@@ -64,25 +57,28 @@ public class CommentService {
             .collect(Collectors.toList());
     }
 
+    // 댓글 수정 기능
     // commentId        수정할 댓글의 Id
     // requestDto       수정할 댓글의 내용이 담긴 Dto
     // return           수정된 댓글의 응답 Dto
-
-    // 댓글 수정 기능
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
         // 기존 댓글 확인
         Comment existingComment = commentRepository.findById(commentId)
             .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
 
-        // 댓글 내용 업데이트
-        existingComment.setCommentText(requestDto.getCommentText());
+        Comment updateComment = Comment.builder()
+            .id(existingComment.getId())
+            .commentText(requestDto.getCommentText())
+            .user(existingComment.getUser())
+            .post(existingComment.getPost())
+            .build();
+        commentRepository.save(updateComment);
 
-        return CommentResponseDto.fromEntity(existingComment);
+        return CommentResponseDto.fromEntity(updateComment);
     }
 
-    // comment Id       삭제할 댓글의 Id
-
     // 댓글 삭제 기능
+    // comment Id       삭제할 댓글의 Id
     public void deleteComment(Long commentId) {
         // 댓글 삭제
         commentRepository.deleteById(commentId);
