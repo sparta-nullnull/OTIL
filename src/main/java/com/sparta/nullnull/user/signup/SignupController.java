@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,15 +23,15 @@ public class SignupController {
     private final SignupService signupService;
 
     @PostMapping("/signup")
-    public ResponseEntity<CommonResponseDto> signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult){
+    public ResponseEntity<CommonResponseDto> signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult){
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         if(fieldErrors.size() > 0){
             for(FieldError fieldError : bindingResult.getFieldErrors()){
                 log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
             }
+            return ResponseEntity.badRequest().body(new CommonResponseDto("회원가입 실패",HttpStatus.BAD_REQUEST.value()));
         }
         signupService.singup(requestDto);
-        return ResponseEntity.ok().body(new CommonResponseDto("회원가입 성공", HttpStatus.NO_CONTENT.value()));
+        return ResponseEntity.ok().body(new CommonResponseDto("회원가입 성공", HttpStatus.CREATED.value()));
     }
-
 }

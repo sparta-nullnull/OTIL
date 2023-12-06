@@ -21,24 +21,25 @@ public class SignupService {
     private String ADMIN_TOKEN;
 
     public void singup(SignupRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        String password = passwordEncoder.encode(requestDto.getPassword());
+        String accountId = requestDto.getAccountId();
+        String rawPassword = requestDto.getPassword();
+        String password = passwordEncoder.encode(rawPassword);
 
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 username 존재");
+        Optional<User> checkAccountId = userRepository.findByAccountId(accountId);
+        if (checkAccountId.isPresent()) {
+            throw new IllegalArgumentException("중복된 아이디 존재");
         }
 
         String nickname = requestDto.getNickname();
         Optional<User> checkNickName = userRepository.findByNickname(nickname);
-        if(checkUsername.isPresent()){
-            throw new IllegalArgumentException("중복된 checkNickName 존재");
+        if(checkNickName.isPresent()){
+            throw new IllegalArgumentException("중복된 닉네임 존재");
         }
 
-        String email = requestDto.email;
+        String email = requestDto.getEmail();
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 email 존재");
+            throw new IllegalArgumentException("중복된 이메일 존재");
         }
 
         UserRoleEnum roleEnum = UserRoleEnum.USER;
@@ -49,7 +50,7 @@ public class SignupService {
             roleEnum = UserRoleEnum.ADMIN;
         }
 
-        User user = new User(username, password, nickname ,email, roleEnum);
+        User user = new User(accountId, password, nickname ,email, roleEnum);
         userRepository.save(user);
     }
 }
