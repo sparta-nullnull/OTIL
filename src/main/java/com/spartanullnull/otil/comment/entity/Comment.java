@@ -25,6 +25,8 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private String commentText; // 댓글 내용
+
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
