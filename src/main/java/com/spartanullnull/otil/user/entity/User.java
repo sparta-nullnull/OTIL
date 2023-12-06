@@ -4,6 +4,7 @@ package com.spartanullnull.otil.user.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spartanullnull.otil.comment.entity.Comment;
 import com.spartanullnull.otil.post.entity.Post;
+import jakarta.annotation.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,8 +14,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,11 +35,14 @@ public class User {
 	private String nickName;
 
 	@Column(nullable = false)
-	private String userName;
+	private String accountId;
 
 	@Column(nullable = false)
 	private String email;
 
 	@Column(nullable = false)
 	private String password;
+
+	@Nullable
+	private String adminKey;
 }

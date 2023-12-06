@@ -33,7 +33,7 @@ public class Post {
 	private final List<Comment> comments = new ArrayList<>();
 
 	@JsonIgnore
-	@OneToMany(targetEntity = Category.class, mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true)
+	@OneToMany(targetEntity = Category.class, mappedBy = "post", cascade = CascadeType.PERSIST,orphanRemoval = true)
 	private final List<Category> categories = new ArrayList<>();
 
 	@JsonIgnore
