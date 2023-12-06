@@ -33,7 +33,7 @@ public class CommentService {
 
     // 댓글 작성 기능
     @Transactional
-    public CommentResponseDto createComment(Long postId, Long userId, CommentRequestDTO requestDTO) {
+    public CommentResponseDto createComment(Long postId, Long userId, CommentRequestDto requestDto) {
         // 댓글 작성자 및 게시물 확인
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
@@ -42,7 +42,7 @@ public class CommentService {
 
         // 새로운 댓글 생성
         Comment comment = new Comment();
-        comment.setCommentText(requestDTO.getCommentText());
+        comment.setCommentText(requestDto.getCommentText());
         comment.setUser(user);
         comment.setPost(post);
 
