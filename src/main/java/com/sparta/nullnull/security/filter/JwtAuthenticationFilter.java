@@ -14,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.sparta.nullnull.user.entity.User;
 
 @Slf4j(topic = "로그인 및 JWT 생성") //인증
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -22,7 +21,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/api/users/login");
     }
 
     @Override
@@ -32,7 +31,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            requestDto.getUsername(),
+                            requestDto.getAccountId(),
                             requestDto.getPassword(),
                             null
                     )

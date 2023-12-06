@@ -26,7 +26,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false,unique = true)
-    private String username;
+    private String accountId;
 
     @Column
     @NotNull
@@ -43,8 +43,8 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    public User(String username, String password, String email, String nickname, UserRoleEnum role) {
-        this.username = username;
+    public User(String accountId, String password, String email, String nickname, UserRoleEnum role) {
+        this.accountId = accountId;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
