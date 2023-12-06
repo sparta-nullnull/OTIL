@@ -1,5 +1,6 @@
 package com.spartanullnull.otil.post.dto;
 
+import com.spartanullnull.otil.global.common.*;
 import com.spartanullnull.otil.post.entity.*;
 import java.time.*;
 import lombok.*;
@@ -7,8 +8,8 @@ import lombok.*;
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-public class PostResponseDto {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class PostResponseDto extends CommonResponseDto {
 
     private Long id;
     private String title;
