@@ -21,4 +21,14 @@ public class PostService {
 
         return PostResponseDto.of(post);
     }
+
+    public PostResponseDto getPost(Long postId) {
+        Post post = findById(postId);
+        return PostResponseDto.of(post);
+    }
+
+    public Post findById(Long postId) {
+        return postRepository.findById(postId)
+            .orElseThrow(() -> new NullPointerException("해당 TIL이 존재하지 않아요!"));
+    }
 }
