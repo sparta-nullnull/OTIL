@@ -4,7 +4,8 @@ import com.spartanullnull.otil.domain.post.dto.*;
 import com.spartanullnull.otil.domain.post.entity.*;
 import com.spartanullnull.otil.domain.post.repository.*;
 import com.spartanullnull.otil.domain.user.entity.*;
-import com.spartanullnull.otil.security.Impl.*;
+import java.util.*;
+import java.util.stream.*;
 import lombok.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
@@ -33,9 +34,12 @@ public class PostService {
     }
 
     //TODO
-//    public PostResponseDto getPostList() {
-    //
-//    }
+    public List<PostResponseDto> getPostList() {
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+        return postList.stream()
+            .map(post -> PostResponseDto.of(post))
+            .collect(Collectors.toList());
+    }
 
     @Transactional
     public PostResponseDto modifyPost(Long postId, User user,

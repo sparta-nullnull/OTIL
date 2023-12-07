@@ -37,6 +37,7 @@ public class Post extends BaseTime {
     private String content;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Post(String title, String content, User user) {
@@ -59,8 +60,4 @@ public class Post extends BaseTime {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }
-    //TODO
-//    public setUser(User user) {
-//        this.user = user;
-//    }
 }

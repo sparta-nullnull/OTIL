@@ -4,6 +4,7 @@ import com.spartanullnull.otil.domain.post.dto.*;
 import com.spartanullnull.otil.domain.post.service.*;
 import com.spartanullnull.otil.global.dto.*;
 import com.spartanullnull.otil.security.Impl.*;
+import java.util.*;
 import lombok.*;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.*;
@@ -35,12 +36,12 @@ public class PostController {
         }
     }
 
-//TODO
-//    @GetMapping
-//    public ResponseEntity<List<PostResponseDto>> getPostList() {
-//        List<PostResponseDto> responseDtoList = postService.getPostList();
-//        return ResponseEntity.ok().body(responseDtoList);
-//    }
+    //TODO
+    @GetMapping
+    public ResponseEntity<List<PostResponseDto>> getPostList() {
+        List<PostResponseDto> responseDtoList = postService.getPostList();
+        return ResponseEntity.ok(responseDtoList);
+    }
 
     @PatchMapping("/{postId}")
     public ResponseEntity<CommonResponseDto> modifyPost(@PathVariable Long postId,
