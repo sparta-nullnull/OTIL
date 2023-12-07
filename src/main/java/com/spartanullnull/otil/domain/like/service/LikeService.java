@@ -56,4 +56,13 @@ public class LikeService {
             likeRepository.deleteByUserAndPost(user, post);
         }
     }
+
+    /**
+     *
+     * @param postId    조회할 게시물 ID
+     * @return          게시물의 좋아요 개수
+     */
+    public Long getLikeCountForPost(Long postId) {
+        return likeRepository.countByPostId(postId);
+    }
 }
