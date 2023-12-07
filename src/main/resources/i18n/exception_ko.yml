@@ -1,0 +1,118 @@
+# Common
+unKnown:
+  code: "-9000"
+  msg: "알수 없는 오류가 발생하였습니다."
+  status: "404"
+communicationError:
+  code: "-9001"
+  msg: "통신 중 오류가 발생하였습니다."
+  status: "404"
+dataError:
+  code: "-9002"
+  msg: "형식에 맞지 않는 데이터 오류가 발생하였습니다."
+  status: "400"
+
+# User
+userNotFound:
+  code: "-1100"
+  msg: "존재하지 않는 회원입니다."
+  status: "404"
+emailSigninFailed:
+  code: "-1101"
+  msg: "계정이 존재하지 않거나 이메일 또는 비밀번호가 정확하지 않습니다."
+  status: "404"
+entryPointException:
+  code: "-1102"
+  msg: "해당 리소스에 접근하기 위한 권한이 없습니다."
+  status: "403"
+accessDenied:
+  code: "-1103"
+  msg: "보유한 권한으로 접근할수 없는 리소스 입니다."
+  status: "403"
+existingUser:
+  code: "-1105"
+  msg: "이미 가입한 회원입니다. 로그인을 해주십시오."
+  status: "403"
+requiresLogin:
+  code: "-1106"
+  msg: "로그인이 필요한 요청입니다. 로그인을 해주십시오."
+  status: "403"
+requiresLoggedOut:
+  code: "-1107"
+  msg: "로그아웃이 필요한 요청입니다. 이미 로그인을 하셨다면 로그아웃을 해주세요."
+  status: "403"
+accountIdValidationFail:
+  code: "-1108"
+  msg: "계정아이디는 숫자와 영대소문자 조합으로 작성해주세요."
+  status: "400"
+duplicatedAccountId:
+  code: "-1109"
+  msg: "이미 다른 회원이 사용하고 계시는 계정아이디입니다.다시 입력해주세요."
+  status: "400"
+passwordValidationFail:
+  code: "-1110"
+  msg: "비밀번호는 영대소문자,숫자와 특수문자의 조합으로 작성해주세요."
+  status: "400"
+nickNameValidationFail:
+  code: "-1111"
+  msg: "닉네임은 영대소문자와 숫자의 조합으로 작성해주세요."
+  status: "400"
+emailValidationFail:
+  code: "-1112"
+  msg: "이메일은 \"~~~@~~~.~~~\"형식으로 작성해주세요."
+  status: "400"
+unvalidAdminKey:
+  code: "-1113"
+  msg: "어드민 권한 획득 키값과 일치하지 않습니다."
+  status: "403"
+
+
+# Post
+notFoundPost:
+  code: "-2100"
+  msg: "해당 게시글은 존재하지 않습니다."
+  status: "404"
+duplicatedPost:
+  code: "-2101"
+  msg: "요청에 대한 게시글이 기존에 이미 존재합니다."
+  status: "409"
+notAuthorOfPost:
+  code: "-2103"
+  msg: "해당 게시글의 소유주가 아닙니다."
+  status: "400"
+
+# Comment
+notFoundComment:
+  code: "-3100"
+  msg: "해당 댓글은 존재하지 않습니다."
+  status: "404"
+duplicatedComment:
+  code: "-3101"
+  msg: "요청에 대한 댓글이 기존에 이미 존재합니다."
+  status: "409"
+notAuthorOfComment:
+  code: "-3103"
+  msg: "해당 댓글의 소유주가 아닙니다."
+  status: "400"
+inappropriateComment:
+  code: "-3104"
+  msg: "부적절한 댓글입니다."
+  status: "400"
+
+# Comment
+notFoundCategory:
+  code: "-4100"
+  msg: "해당 카테고리는 존재하지 않습니다."
+  status: "404"
+duplicatedCategory:
+  code: "-4101"
+  msg: "요청에 대한 카테고리는 기존에 이미 존재합니다."
+  status: "409"
+notAuthorOfCategory:
+  code: "-4103"
+  msg: "해당 카테고리의 소유주가 아닙니다."
+  status: "400"
+inappropriateCategory:
+  code: "-4104"
+  msg: "부적절한 카테고리입니다."
+  status: "400"
