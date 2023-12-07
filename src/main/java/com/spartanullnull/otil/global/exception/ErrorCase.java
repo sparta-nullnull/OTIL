@@ -8,7 +8,7 @@ public enum ErrorCase {
 
     /* User */
     USER_NOT_FOUND("userNotFound"),
-    EMAIL_SIGNIN_FAILED("emailSigninFailed"),
+    INCORRECT_ACCOUNT_ID_OR_PASSWORD("incorrectAccountIdOrPassword"),
     ENTRY_POINT_EXCEPTION("entryPointException"),
     ACCESS_DENIED("accessDenied"),
     EXISTING_USER("existingUser"),
@@ -19,7 +19,7 @@ public enum ErrorCase {
     PASSWORD_VALIDATION_FAIL("passwordValidationFail"),
     NICKNAME_VALIDATION_FAIL("nickNameValidationFail"),
     EMAIL_VALIDATION_FAIL("emailValidationFail"),
-    UNVALID_ADMIN_KEY("unvalidAdminKey"),
+    INVALID_ADMIN_KEY("invalidAdminKey"),
 
     /* Post */
     NOT_FOUND_POST("notFoundPost"),

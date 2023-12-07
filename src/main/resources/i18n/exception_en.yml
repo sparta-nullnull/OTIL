@@ -17,9 +17,9 @@ userNotFound:
   code: "-1100"
   msg: "User not found."
   status: "404"
-emailSigninFailed:
+incorrectAccountIdOrPassword:
   code: "-1101"
-  msg: "Account does not exist, or the email or password is incorrect."
+  msg: "The account id or password is incorrect."
   status: "404"
 entryPointException:
   code: "-1102"
@@ -61,7 +61,7 @@ emailValidationFail:
   code: "-1112"
   msg: "Email should be in the format \"~~~@~~~.~~~\"."
   status: "400"
-unvalidAdminKey:
+invalidAdminKey:
   code: "-1113"
   msg: "The admin authorization key does not match."
   status: "403"
