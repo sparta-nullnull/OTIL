@@ -30,7 +30,7 @@ public class ApiPerformanceAspect {
             long end = System.currentTimeMillis();
 
             log.info("targetName : " + joinPoint.getTarget().toString());
-            log.info("Performance Time : " + performance.get());
+            log.info("Performance Time : " + (end - start));
         } catch (Throwable throwable) {
             log.error("Message of Thrown : " + throwable.getMessage());
             log.error("Cause of Thrown : " + throwable.getCause());
