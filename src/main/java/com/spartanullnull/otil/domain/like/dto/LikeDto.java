@@ -9,5 +9,5 @@ public class LikeDto {
 
     private Long id;
     private Long userId;
-    private Long postId;
+//    private Long postId;
 }
