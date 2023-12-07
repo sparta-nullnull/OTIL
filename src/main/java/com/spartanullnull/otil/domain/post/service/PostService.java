@@ -7,6 +7,7 @@ import com.spartanullnull.otil.domain.user.entity.*;
 import com.spartanullnull.otil.security.Impl.*;
 import lombok.*;
 import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,19 +36,28 @@ public class PostService {
     //
 //    }
 
-    public PostResponseDto modifyPost(Long postId, PostRequestDto requestDto) {
+    @Transactional
+    public PostResponseDto modifyPost(Long postId, User user,
+        PostRequestDto requestDto) {
         Post post = findById(postId);
+        findByUsername(post, user.getAccountId());
         post.modifyPost(requestDto);
         return PostResponseDto.of(post);
     }
 
-    public void deletePost(Long postId) {
-        Post post = findById(postId);
-        postRepository.delete(post);
+    private void findByUsername(Post post, String accountId) {
+        if (!post.getUser().getAccountId().equals(accountId)) {
+            throw new IllegalArgumentException("작성자만 수정할 수 있어요!");
+        }
     }
 
     public Post findById(Long postId) {
         return postRepository.findById(postId)
             .orElseThrow(() -> new NullPointerException("해당 TIL이 존재하지 않아요!"));
+    }
+
+    public void deletePost(Long postId) {
+        Post post = findById(postId);
+        postRepository.delete(post);
     }
 }

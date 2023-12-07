@@ -44,13 +44,15 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     public ResponseEntity<CommonResponseDto> modifyPost(@PathVariable Long postId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody PostRequestDto requestDto) {
         try {
-            PostResponseDto responseDto = postService.modifyPost(postId, requestDto);
+            PostResponseDto responseDto = postService.modifyPost(postId, userDetails.getUser(),
+                requestDto);
             return ResponseEntity.ok().body(responseDto);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                .body(new CommonResponseDto(e.getMessage(), HttpStatus.NOT_FOUND.value()));
+                .body(new CommonResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
 
         }
     }
