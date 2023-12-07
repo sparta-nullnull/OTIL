@@ -34,4 +34,5 @@ public class Like extends BaseTime {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment comment;
+
 }
