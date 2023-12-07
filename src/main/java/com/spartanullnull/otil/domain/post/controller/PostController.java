@@ -3,8 +3,10 @@ package com.spartanullnull.otil.domain.post.controller;
 import com.spartanullnull.otil.domain.post.dto.*;
 import com.spartanullnull.otil.domain.post.service.*;
 import com.spartanullnull.otil.global.dto.*;
+import com.spartanullnull.otil.security.Impl.*;
 import lombok.*;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,8 +17,10 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostResponseDto> addPost(@RequestBody PostRequestDto requestDto) {
-        PostResponseDto responseDto = postService.createPost(requestDto);
+    public ResponseEntity<PostResponseDto> addPost(@RequestBody PostRequestDto requestDto,
+        @AuthenticationPrincipal
+        UserDetailsImpl userDetails) {
+        PostResponseDto responseDto = postService.createPost(requestDto, userDetails.getUser());
         return ResponseEntity.status(201).body(responseDto);
     }
 
@@ -38,7 +42,7 @@ public class PostController {
 //        return ResponseEntity.ok().body(responseDtoList);
 //    }
 
-    @PatchMapping("/postId")
+    @PatchMapping("/{postId}")
     public ResponseEntity<CommonResponseDto> modifyPost(@PathVariable Long postId,
         @RequestBody PostRequestDto requestDto) {
         try {
@@ -49,6 +53,11 @@ public class PostController {
                 .body(new CommonResponseDto(e.getMessage(), HttpStatus.NOT_FOUND.value()));
 
         }
+    }
+
+    @DeleteMapping("/{postId}")
+    public void deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
     }
 
 }

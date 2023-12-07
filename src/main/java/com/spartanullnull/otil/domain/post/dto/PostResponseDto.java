@@ -12,6 +12,7 @@ import lombok.*;
 public class PostResponseDto extends CommonResponseDto {
 
     private Long id;
+    private String accountId;
     private String title;
     private String content;
     private LocalDateTime createdAt;
@@ -20,6 +21,7 @@ public class PostResponseDto extends CommonResponseDto {
     public static PostResponseDto of(Post post) {
         return PostResponseDto.builder()
             .id(post.getId())
+            .accountId(post.getUser().getAccountId())
             .title(post.getTitle())
             .content(post.getContent())
             .createdAt(post.getCreatedAt())
