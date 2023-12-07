@@ -26,6 +26,7 @@ public class PostService {
         return PostResponseDto.of(post);
     }
 
+    @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         Post post = findById(postId);
         return PostResponseDto.of(post);
@@ -45,10 +46,11 @@ public class PostService {
         return PostResponseDto.of(post);
     }
 
-    private void findByUsername(Post post, String accountId) {
-        if (!post.getUser().getAccountId().equals(accountId)) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있어요!");
-        }
+    @Transactional
+    public void deletePost(Long postId, User user) {
+        Post post = findById(postId);
+        findByUsername(post, user.getAccountId());
+        postRepository.delete(post);
     }
 
     public Post findById(Long postId) {
@@ -56,8 +58,9 @@ public class PostService {
             .orElseThrow(() -> new NullPointerException("해당 TIL이 존재하지 않아요!"));
     }
 
-    public void deletePost(Long postId) {
-        Post post = findById(postId);
-        postRepository.delete(post);
+    private void findByUsername(Post post, String accountId) {
+        if (!post.getUser().getAccountId().equals(accountId)) {
+            throw new IllegalArgumentException("작성자만 수정할 수 있어요!");
+        }
     }
 }
