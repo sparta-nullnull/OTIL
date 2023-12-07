@@ -1,10 +1,10 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/nullnull
+    url: ${DB_URL}
     driverClassName: com.mysql.cj.jdbc.Driver
-    root: {$root}
-    password: {$password}
-    
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
   jpa:
     properties:
       hibernate:
@@ -17,13 +17,15 @@ spring:
 jwt:
   secret:
     key:
-      1a1b9536d65432b16d4ded7f2814c8e5105ceae7ced4e173b086c564f2efa609d03c8ab84a78492f3175c0ce8ef792d6e55157f34777628f6f55163ef115bfe4
+      ${JWT_KEY}
 
-ADMIN_TOKEN = 11
+admin:
+  token:
+    ${ADMIN_TOKEN}
 
-profile:
-  image:
-    directory: "your/profile/image/directory"
+#profile:
+#  image:
+#    directory: "your/profile/image/directory"
 
 logging:
   level:
