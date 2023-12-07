@@ -31,4 +31,24 @@ public class PostController {
         }
     }
 
+//TODO
+//    @GetMapping
+//    public ResponseEntity<List<PostResponseDto>> getPostList() {
+//        List<PostResponseDto> responseDtoList = postService.getPostList();
+//        return ResponseEntity.ok().body(responseDtoList);
+//    }
+
+    @PatchMapping("/postId")
+    public ResponseEntity<CommonResponseDto> modifyPost(@PathVariable Long postId,
+        @RequestBody PostRequestDto requestDto) {
+        try {
+            PostResponseDto responseDto = postService.modifyPost(postId, requestDto);
+            return ResponseEntity.ok().body(responseDto);
+        } catch (NullPointerException e) {
+            return ResponseEntity.badRequest()
+                .body(new CommonResponseDto(e.getMessage(), HttpStatus.NOT_FOUND.value()));
+
+        }
+    }
+
 }
