@@ -4,8 +4,10 @@ import com.spartanullnull.otil.domain.comment.dto.*;
 import com.spartanullnull.otil.domain.comment.entity.*;
 import com.spartanullnull.otil.domain.comment.repository.*;
 import com.spartanullnull.otil.domain.post.entity.*;
+import com.spartanullnull.otil.domain.post.exception.*;
 import com.spartanullnull.otil.domain.post.repository.*;
 import com.spartanullnull.otil.domain.user.entity.*;
+import com.spartanullnull.otil.domain.user.exception.*;
 import com.spartanullnull.otil.domain.user.repository.*;
 import java.util.*;
 import java.util.stream.*;
@@ -31,9 +33,10 @@ public class CommentService {
         CommentRequestDto requestDto) {
         // 댓글 작성자 및 게시물 확인
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("userId", userId.toString(),
+                "해당 Id에 대한 사용자가 없습니다."));
         Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("TIL을 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundPostException("postId", postId.toString()));
 
         Comment comment = Comment.builder()
             .commentText(requestDto.getCommentText())
