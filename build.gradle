@@ -27,8 +27,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    /* AOP */
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     /* Message Source */
-    implementation 'net.rakugakibox.util:yaml-resource-bundle:1.4'
+    implementation 'net.rakugakibox.util:yaml-resource-bundle'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
