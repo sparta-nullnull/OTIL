@@ -3,21 +3,17 @@ package com.spartanullnull.otil.domain.comment.controller;
 import com.spartanullnull.otil.domain.comment.dto.*;
 import com.spartanullnull.otil.domain.comment.service.*;
 import java.util.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/posts/{postId}/comments")
 public class CommentController {
 
     private final CommentService commentService;
-
-    @Autowired
-    public CommentController(CommentService commentService) {
-        this.commentService = commentService;
-    }
-
     // 댓글 작성
     // postId       TIL ID
     // userId       사용자 ID

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.spartanullnull.otil.domain.comment.entity.*;
 import com.spartanullnull.otil.domain.post.entity.Post;
 import com.spartanullnull.otil.domain.user.entity.User;
+import com.spartanullnull.otil.util.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "likes")
-public class Like {
+public class Like extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
