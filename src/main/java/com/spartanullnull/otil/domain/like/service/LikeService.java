@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +82,7 @@ public class LikeService {
 
     public List<Post> getTop3PostsByLikes() {
         // 좋아요가 가장 많은 상위 3개의 게시물의 데이터를 조회
-        List<Object[]> top3PostsData = likeRepository.findTop3PostsByLikes();
+        List<Object[]> top3PostsData = likeRepository.findTop3PostsByLikes(PageRequest.of(0, 3));
         List<Post> top3Posts = new ArrayList<>();
 
         // 상위 3개의 게시물 ID를 추출하여 조회
