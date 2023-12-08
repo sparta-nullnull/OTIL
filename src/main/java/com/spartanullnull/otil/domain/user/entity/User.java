@@ -1,7 +1,10 @@
 package com.spartanullnull.otil.domain.user.entity;
 
+import com.spartanullnull.otil.domain.reportpost.ReportPost;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 
 @Entity
@@ -31,6 +34,9 @@ public class User {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
+    @OneToMany(mappedBy = "user")
+    private List<ReportPost> reportPost = new ArrayList<>();
 
     private Long kakaoId;
 
