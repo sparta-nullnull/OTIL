@@ -1,7 +1,9 @@
 package com.spartanullnull.otil.domain.like.controller;
 
 import com.spartanullnull.otil.domain.like.service.LikeService;
+import com.spartanullnull.otil.domain.post.entity.Post;
 import com.spartanullnull.otil.security.Impl.UserDetailsImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,5 +44,13 @@ public class LikeController {
     public ResponseEntity<String> getLikeCountForPost(@PathVariable Long postId) {
         Long likeCount = likeService.getLikeCountForPost(postId);
         return ResponseEntity.ok("좋아요 : " + likeCount);
+    }
+
+    // 좋아요가 가장 많은 상위 3개의 게시물 조회 API
+    @GetMapping("/top3")
+    public ResponseEntity<List<Post>> getTop3PostsByLikes() {
+        // 좋아요가 가장 많은 상위 3개의 게시물 조회
+        List<Post> top3Posts = likeService.getTop3PostsByLikes();
+        return ResponseEntity.ok(top3Posts);
     }
 }
