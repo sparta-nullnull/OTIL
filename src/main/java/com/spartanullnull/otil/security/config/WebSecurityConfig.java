@@ -8,6 +8,7 @@ import com.spartanullnull.otil.security.filter.*;
 import lombok.*;
 import org.springframework.boot.autoconfigure.security.servlet.*;
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.configuration.*;
 import org.springframework.security.config.annotation.web.builders.*;
@@ -60,12 +61,16 @@ public class WebSecurityConfig {
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
+        //login,signup,profile,posts,comments 접근 허용 그 외 인증 필요
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .permitAll() // resources 접근 허용 설정
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                 .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
-                .requestMatchers("/api/users/login","/api/users/signup","/api/posts").permitAll() // '요청 모두 접근 허가
+                .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll() // 접근 허가
+                .requestMatchers(HttpMethod.POST,"/api/users/signup").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/users/profile/{$userid}").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/posts").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/posts/{$postId}/comments").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
