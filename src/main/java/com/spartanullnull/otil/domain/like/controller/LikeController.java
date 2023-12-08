@@ -1,5 +1,6 @@
 package com.spartanullnull.otil.domain.like.controller;
 
+import com.spartanullnull.otil.domain.comment.entity.Comment;
 import com.spartanullnull.otil.domain.like.service.LikeService;
 import com.spartanullnull.otil.domain.post.entity.Post;
 import com.spartanullnull.otil.security.Impl.UserDetailsImpl;
@@ -44,6 +45,33 @@ public class LikeController {
     public ResponseEntity<String> getLikeCountForPost(@PathVariable Long postId) {
         Long likeCount = likeService.getLikeCountForPost(postId);
         return ResponseEntity.ok("좋아요 : " + likeCount);
+    }
+
+    // 댓글 좋아요 누르기 API
+    @PostMapping("/{postId}/comments/{commentId}/like")
+    public ResponseEntity<String> createLikeForComment(
+        @PathVariable Long postId,
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        likeService.createLikeForComment(userDetails.getUser().getId(), commentId);
+        return ResponseEntity.ok("댓글 좋아요 성공!");
+    }
+
+    // 댓글 좋아요 취소하기 API
+    @DeleteMapping("/{postId}/comments/{commentId}/like")
+    public ResponseEntity<String> deleteLikeForComment(
+        @PathVariable Long postId,
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        likeService.deleteLikeForComment(userDetails.getUser().getId(), commentId);
+        return ResponseEntity.ok("댓글 좋아요 취소!");
+    }
+
+    // 댓글 좋아요 개수 조회 API
+    @GetMapping("/{postId}/comments/{commentId}/count")
+    public ResponseEntity<String> getLikeCountForComment(@PathVariable Long commentId) {
+        Long likeCount = likeService.getLikeCountForComment(commentId);
+        return ResponseEntity.ok("댓글 좋아요 : " + likeCount);
     }
 
     // 좋아요가 가장 많은 상위 3개의 게시물 조회 API
