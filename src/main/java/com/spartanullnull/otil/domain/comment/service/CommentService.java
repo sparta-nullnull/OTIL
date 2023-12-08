@@ -63,7 +63,7 @@ public class CommentService {
     // commentId        수정할 댓글의 Id
     // requestDto       수정할 댓글의 내용이 담긴 Dto
     // return           수정된 댓글의 응답 Dto
-    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
+    public CommentResponseDto updateComment(Long userId ,Long commentId, CommentRequestDto requestDto) {
         // 기존 댓글 확인
         Comment existingComment = commentRepository.findById(commentId)
             .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
@@ -81,7 +81,7 @@ public class CommentService {
 
     // 댓글 삭제 기능
     // comment Id       삭제할 댓글의 Id
-    public void deleteComment(Long commentId) {
+    public void deleteComment(Long commentId, Long id) {
         // 댓글 삭제
         commentRepository.deleteById(commentId);
     }

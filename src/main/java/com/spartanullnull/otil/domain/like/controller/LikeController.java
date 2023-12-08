@@ -39,8 +39,8 @@ public class LikeController {
 
     // 좋아요 개수 조회 API
     @GetMapping("/{postId}/count")
-    public ResponseEntity<Long> getLikeCountForPost(@PathVariable Long postId) {
+    public ResponseEntity<String> getLikeCountForPost(@PathVariable Long postId) {
         Long likeCount = likeService.getLikeCountForPost(postId);
-        return ResponseEntity.ok(likeCount);
+        return ResponseEntity.ok("좋아요 : " + likeCount);
     }
 }

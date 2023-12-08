@@ -1,13 +1,14 @@
 package com.spartanullnull.otil.domain.comment.controller;
 
 import com.spartanullnull.otil.domain.comment.dto.*;
-import com.spartanullnull.otil.domain.comment.service.*;
-import java.util.*;
+import com.spartanullnull.otil.domain.comment.service.CommentService;
+import com.spartanullnull.otil.security.Impl.UserDetailsImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/posts/{postId}/comments")
@@ -23,9 +24,12 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<CommentResponseDto> createComment(
         @PathVariable Long postId,
-        @RequestParam Long userId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody CommentRequestDto requestDto
     ) {
+        // 현재 로그인한 사용자의 ID를 가져옴
+        Long userId = userDetails.getUser().getId();
+
         CommentResponseDto createdComment = commentService.createComment(postId, userId,
             requestDto);
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
@@ -42,31 +46,35 @@ public class CommentController {
     }
 
     // 댓글 수정
-    // postId       TIL ID
     // commentId    댓글 ID
     // requestDto   수정할 댓글 정보
     // return       ResponseEntity<CommentResponseDto>
     //              수정된 댓글과 HTTP 상태 코드 반환
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(
-        @PathVariable Long postId,
         @PathVariable Long commentId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody CommentRequestDto requestDto
     ) {
-        CommentResponseDto updatedComment = commentService.updateComment(commentId, requestDto);
+        // 현재 로그인한 사용자의 ID를 가져옴
+        Long userId = userDetails.getUser().getId();
+
+        CommentResponseDto updatedComment = commentService.updateComment(commentId, userId ,requestDto);
         return new ResponseEntity<>(updatedComment, HttpStatus.OK);
     }
 
     // 댓글 삭제
-    // postId       TIL ID
     // commentId    댓글 ID
     // return       ResponseEntity<Void> HTTP 상태 코드 반환
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
-        @PathVariable Long postId,
-        @PathVariable Long commentId
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        commentService.deleteComment(commentId);
+        // 현재 로그인한 사용자의 ID를 가져옴
+        Long userId = userDetails.getUser().getId();
+
+        commentService.deleteComment(userId, commentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
