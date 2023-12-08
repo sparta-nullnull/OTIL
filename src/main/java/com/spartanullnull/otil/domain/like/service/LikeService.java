@@ -52,7 +52,7 @@ public class LikeService {
     public void deleteLikeForPost(Long userId, Long postId) {
 
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("TIL을 찾을 수 없습니다."));
+            .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new EntityNotFoundException("TIL을 찾을 수 없습니다."));
