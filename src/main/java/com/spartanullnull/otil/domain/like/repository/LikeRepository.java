@@ -1,5 +1,6 @@
 package com.spartanullnull.otil.domain.like.repository;
 
+import com.spartanullnull.otil.domain.comment.entity.Comment;
 import com.spartanullnull.otil.domain.like.entity.Like;
 import com.spartanullnull.otil.domain.post.entity.Post;
 import com.spartanullnull.otil.domain.user.entity.User;
@@ -14,8 +15,15 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     void deleteByUserAndPost(User user, Post post);
 
+    boolean existsByUserAndComment(User user, Comment comment);
+
+    void deleteByUserAndComment(User user, Comment comment);
+
     // 특정 게시물에 대한 좋아요 개수 조회
     Long countByPostId(Long postId);
+
+    // 특정 댓글에 대한 좋아요 개수 조회
+    Long countByCommentId(Long commentId);
 
     // 모든 게시물에 대한 좋아요 개수를 내림차순으로 정렬하여 조회
     @Query("SELECT p.id, COUNT(l) AS likeCount FROM Post p LEFT JOIN Like l ON p.id = l.post.id GROUP BY p.id ORDER BY likeCount DESC")
