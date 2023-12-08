@@ -27,12 +27,13 @@ public class LikeService {
      */
     @Transactional
     public void createLikeForPost(Long userId , Long postId) {
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new EntityNotFoundException("TIL을 찾을 수 없습니다."));
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
+        
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new EntityNotFoundException("TIL을 찾을 수 없습니다."));
+        
         if (!likeRepository.existsByUserAndPost(user, post)) {
             likeRepository.save(Like.builder().user(user).post(post).build());
         }
@@ -46,12 +47,13 @@ public class LikeService {
      */
     @Transactional
     public void deleteLikeForPost(Long userId, Long postId) {
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new EntityNotFoundException("TIL을 찾을 수 없습니다."));
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("TIL을 찾을 수 없습니다."));
-
+        
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new EntityNotFoundException("TIL을 찾을 수 없습니다."));
+        
         if (likeRepository.existsByUserAndPost(user, post)) {
             likeRepository.deleteByUserAndPost(user, post);
         }
