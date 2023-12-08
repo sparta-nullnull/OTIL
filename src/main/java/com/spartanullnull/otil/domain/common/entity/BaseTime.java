@@ -1,4 +1,4 @@
-package com.spartanullnull.otil.domain.common;
+package com.spartanullnull.otil.domain.common.entity;
 
 import jakarta.persistence.*;
 import java.time.*;

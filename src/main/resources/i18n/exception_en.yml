@@ -1,0 +1,117 @@
+# Common
+unKnown:
+  code: "-9000"
+  msg: "An unknown error occurred."
+  status: "404"
+communicationError:
+  code: "-9001"
+  msg: "An error occurred during communication."
+  status: "404"
+dataError:
+  code: "-9002"
+  msg: "Data error occurred due to incorrect format."
+  status: "400"
+
+# User
+userNotFound:
+  code: "-1100"
+  msg: "User not found."
+  status: "404"
+incorrectAccountIdOrPassword:
+  code: "-1101"
+  msg: "The account id or password is incorrect."
+  status: "404"
+entryPointException:
+  code: "-1102"
+  msg: "Permission is not granted to access this resource."
+  status: "403"
+accessDenied:
+  code: "-1103"
+  msg: "Access to the resource is denied with current permissions."
+  status: "403"
+existingUser:
+  code: "-1105"
+  msg: "The user is already registered. Please log in."
+  status: "403"
+requiresLogin:
+  code: "-1106"
+  msg: "Login is required for this request. Please log in."
+  status: "403"
+requiresLoggedOut:
+  code: "-1107"
+  msg: "Logout is required for this request. If you are already logged in, please logout."
+  status: "403"
+accountIdValidationFail:
+  code: "-1108"
+  msg: "Account ID should be a combination of numbers and lowercase/uppercase letters."
+  status: "400"
+duplicatedAccountId:
+  code: "-1109"
+  msg: "The account ID is already in use by another user. Please choose a different one."
+  status: "400"
+passwordValidationFail:
+  code: "-1110"
+  msg: "Password should be a combination of uppercase/lowercase letters, numbers, and special characters."
+  status: "400"
+nickNameValidationFail:
+  code: "-1111"
+  msg: "Nickname should be a combination of uppercase/lowercase letters and numbers."
+  status: "400"
+emailValidationFail:
+  code: "-1112"
+  msg: "Email should be in the format \"~~~@~~~.~~~\"."
+  status: "400"
+invalidAdminKey:
+  code: "-1113"
+  msg: "The admin authorization key does not match."
+  status: "403"
+
+# Post
+notFoundPost:
+  code: "-2100"
+  msg: "The requested post does not exist."
+  status: "404"
+duplicatedPost:
+  code: "-2101"
+  msg: "A post for the request already exists."
+  status: "409"
+notAuthorOfPost:
+  code: "-2103"
+  msg: "You are not the owner of this post."
+  status: "400"
+
+# Comment
+notFoundComment:
+  code: "-3100"
+  msg: "The requested comment does not exist."
+  status: "404"
+duplicatedComment:
+  code: "-3101"
+  msg: "A comment for the request already exists."
+  status: "409"
+notAuthorOfComment:
+  code: "-3103"
+  msg: "You are not the owner of this comment."
+  status: "400"
+inappropriateComment:
+  code: "-3104"
+  msg: "The comment is inappropriate."
+  status: "400"
+
+# Category
+notFoundCategory:
+  code: "-4100"
+  msg: "The requested category does not exist."
+  status: "404"
+duplicatedCategory:
+  code: "-4101"
+  msg: "A category for the request already exists."
+  status: "409"
+notAuthorOfCategory:
+  code: "-4103"
+  msg: "You are not the owner of this category."
+  status: "400"
+inappropriateCategory:
+  code: "-4104"
+  msg: "The category is inappropriate."
+  status: "400"
