@@ -3,7 +3,6 @@ package com.spartanullnull.otil.domain.post.entity;
 import com.fasterxml.jackson.annotation.*;
 import com.spartanullnull.otil.domain.category.entity.*;
 import com.spartanullnull.otil.domain.comment.entity.*;
-import com.spartanullnull.otil.domain.like.entity.Like;
 import com.spartanullnull.otil.domain.post.dto.*;
 import com.spartanullnull.otil.domain.recommend.entity.*;
 import com.spartanullnull.otil.domain.user.entity.*;
@@ -40,9 +39,11 @@ public class Post extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Like> likes = new ArrayList<>();
+    public Post(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+    }
 
     public Post(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
