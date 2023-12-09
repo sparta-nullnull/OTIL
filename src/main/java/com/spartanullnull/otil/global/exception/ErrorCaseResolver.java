@@ -10,7 +10,7 @@ import org.springframework.stereotype.*;
 @Component
 @Getter
 @RequiredArgsConstructor
-public class ErrorCaseResolver {
+public final class ErrorCaseResolver {
 
     static MessageSource messageSource;
     private final MessageSource wiredMessageSource;
