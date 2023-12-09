@@ -4,6 +4,7 @@ import com.spartanullnull.otil.domain.category.entity.*;
 import com.spartanullnull.otil.domain.category.repository.*;
 import com.spartanullnull.otil.domain.post.dto.*;
 import com.spartanullnull.otil.domain.post.entity.*;
+import com.spartanullnull.otil.domain.post.exception.*;
 import com.spartanullnull.otil.domain.post.repository.*;
 import com.spartanullnull.otil.domain.user.entity.*;
 import java.util.*;
@@ -70,12 +71,13 @@ public class PostService {
 
     public Post findById(Long postId) {
         return postRepository.findById(postId)
-            .orElseThrow(() -> new NullPointerException("해당 TIL이 존재하지 않아요!"));
+            .orElseThrow(
+                () -> new NotFoundPostException("postId", postId.toString(), "해당 TIL이 존재하지 않아요!"));
     }
 
     private void checkAuthority(Post post, String accountId) {
         if (!post.getUser().getAccountId().equals(accountId)) {
-            throw new IllegalArgumentException("작성자만 가능한 기능이에요!");
+            throw new NotAuthorOfPostException("accountId", accountId, "작성자만 할 수 있는 기능이에요!");
         }
     }
 }

@@ -26,14 +26,9 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<CommonResponseDto> getPost(@PathVariable Long postId) {
-        try {
-            PostResponseDto responseDto = postService.getPost(postId);
-            return ResponseEntity.ok().body(responseDto);
-        } catch (NullPointerException e) {
-            return ResponseEntity.badRequest()
-                .body(new CommonResponseDto(e.getMessage(), HttpStatus.NOT_FOUND.value()));
-        }
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
+        PostResponseDto responseDto = postService.getPost(postId);
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping
@@ -43,24 +38,19 @@ public class PostController {
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<CommonResponseDto> modifyPost(@PathVariable Long postId,
+    public ResponseEntity<PostResponseDto> modifyPost(@PathVariable Long postId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody PostRequestDto requestDto) {
-        try {
-            PostResponseDto responseDto = postService.modifyPost(postId, userDetails.getUser(),
-                requestDto);
-            return ResponseEntity.ok().body(responseDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                .body(new CommonResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
-
-        }
+        PostResponseDto responseDto = postService.modifyPost(postId, userDetails.getUser(),
+            requestDto);
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @DeleteMapping("/{postId}")
-    public void deletePost(@PathVariable Long postId,
+    public ResponseEntity<String> deletePost(@PathVariable Long postId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.deletePost(postId, userDetails.getUser());
+        return ResponseEntity.ok().body("성공적으로 삭제 되었습니다.");
     }
 
 }
