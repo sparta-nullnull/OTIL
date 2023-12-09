@@ -1,7 +1,9 @@
 package com.spartanullnull.otil.domain.recommend.controller;
 
+import com.spartanullnull.otil.domain.post.entity.Post;
 import com.spartanullnull.otil.domain.recommend.service.RecommendService;
 import com.spartanullnull.otil.security.Impl.UserDetailsImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,5 +60,12 @@ public class RecommendController {
     public ResponseEntity<String> getRecommendCount(@PathVariable Long postId) {
         Long recommendCount = recommendService.getRecommendCount(postId);
         return ResponseEntity.ok("게시물 추천 수 : " + recommendCount);
+    }
+
+    // 추천을 많이 받은 Top3 게시물 조회 API
+    @GetMapping("/recommend/top3")
+    public ResponseEntity<List<Post>> getTop3PostsByRecommends() {
+        List<Post> top3Posts = recommendService.getTop3PostsByRecommends();
+        return ResponseEntity.ok(top3Posts);
     }
 }
