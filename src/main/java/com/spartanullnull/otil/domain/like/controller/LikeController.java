@@ -1,6 +1,6 @@
 package com.spartanullnull.otil.domain.like.controller;
 
-import com.spartanullnull.otil.domain.like.service.CommentLikeService;
+import com.spartanullnull.otil.domain.like.service.LikeService;
 import com.spartanullnull.otil.security.Impl.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,13 +17,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
-public class CommentLikeController {
+public class LikeController {
 
-    private final CommentLikeService commentLikeService;
+    private final LikeService commentLikeService;
 
     // 댓글 좋아요 누르기 API
     @PostMapping("/{postId}/comments/{commentId}/like")
-    public ResponseEntity<String> createLikeForComment(
+    public ResponseEntity<String> createLike(
         @PathVariable Long postId,
         @PathVariable Long commentId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -33,13 +33,13 @@ public class CommentLikeController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인한 사용자만 댓글 좋아요를 누를 수 있습니다.");
         }
 
-        commentLikeService.createLikeForComment(userDetails.getUser().getId(), commentId);
+        commentLikeService.createLike(userDetails.getUser().getId(), commentId);
         return ResponseEntity.ok("댓글 좋아요 성공!");
     }
 
     // 댓글 좋아요 취소하기 API
     @DeleteMapping("/{postId}/comments/{commentId}/like")
-    public ResponseEntity<String> deleteLikeForComment(
+    public ResponseEntity<String> deleteLike(
         @PathVariable Long postId,
         @PathVariable Long commentId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -49,14 +49,14 @@ public class CommentLikeController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인한 사용자만 댓글 좋아요를 취소할 수 있습니다.");
         }
 
-        commentLikeService.deleteLikeForComment(userDetails.getUser().getId(), commentId);
+        commentLikeService.deleteLike(userDetails.getUser().getId(), commentId);
         return ResponseEntity.ok("댓글 좋아요 취소!");
     }
 
     // 댓글 좋아요 개수 조회 API
     @GetMapping("/{postId}/comments/{commentId}/count")
-    public ResponseEntity<String> getLikeCountForComment(@PathVariable Long commentId) {
-        Long likeCount = commentLikeService.getLikeCountForComment(commentId);
+    public ResponseEntity<String> getLikeCount(@PathVariable Long commentId) {
+        Long likeCount = commentLikeService.getLikeCount(commentId);
         return ResponseEntity.ok("댓글 좋아요 : " + likeCount);
     }
 }

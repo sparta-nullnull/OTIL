@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CommentLikeService {
+public class LikeService {
 
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
@@ -26,7 +26,7 @@ public class CommentLikeService {
      * @param commentId     좋아요를 누를 댓글 ID
      */
     @Transactional
-    public void createLikeForComment(Long userId, Long commentId) {
+    public void createLike(Long userId, Long commentId) {
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
@@ -34,7 +34,7 @@ public class CommentLikeService {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
-        if (likeRepository.existsByUserAndComment(user, comment)) {
+        if (likeRepository.existsByUser(user, comment)) {
             // 좋아요가 이미 존재하면 처리하지 않음
             return;
         }
@@ -49,7 +49,7 @@ public class CommentLikeService {
      * @param commentId   좋아요를 취소할 댓글 ID
      */
     @Transactional
-    public void deleteLikeForComment(Long userId, Long commentId) {
+    public void deleteLike(Long userId, Long commentId) {
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
@@ -57,18 +57,16 @@ public class CommentLikeService {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
-        if (likeRepository.existsByUserAndComment(user, comment)) {
-            likeRepository.deleteByUserAndComment(user, comment);
+        if (likeRepository.existsByUser(user, comment)) {
+            likeRepository.deleteByUser(user, comment);
         }
     }
-
     /**
      *
      * @param commentId   조회할 댓글 ID
      * @return            댓글의 좋아요 개수
      */
-    public Long getLikeCountForComment(Long commentId) {
+    public Long getLikeCount(Long commentId) {
         return likeRepository.countByCommentId(commentId);
     }
-
 }
