@@ -35,4 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Ignore application.yml
 application.yml

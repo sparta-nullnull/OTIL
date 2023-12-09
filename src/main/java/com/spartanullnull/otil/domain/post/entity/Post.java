@@ -39,6 +39,12 @@ public class Post extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    public Post(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+    }
+
     public Post(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
