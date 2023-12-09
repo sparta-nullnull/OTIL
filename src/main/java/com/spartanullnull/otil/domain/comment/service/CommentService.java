@@ -2,6 +2,8 @@ package com.spartanullnull.otil.domain.comment.service;
 
 import com.spartanullnull.otil.domain.comment.dto.*;
 import com.spartanullnull.otil.domain.comment.entity.*;
+import com.spartanullnull.otil.domain.comment.exception.NotAuthorOfCommentException;
+import com.spartanullnull.otil.domain.comment.exception.NotFoundCommentException;
 import com.spartanullnull.otil.domain.comment.repository.*;
 import com.spartanullnull.otil.domain.post.entity.*;
 import com.spartanullnull.otil.domain.post.exception.*;
@@ -76,11 +78,11 @@ public class CommentService {
     public CommentResponseDto updateComment(Long userId ,Long commentId, CommentRequestDto requestDto) {
         // 기존 댓글 확인
         Comment existingComment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundCommentException("commentId", commentId.toString(),"댓글을 찾을 수 없습니다."));
 
         // 댓글 소유자 확인
         if (!existingComment.getUser().getId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "댓글을 수정할 권한이 없습니다.");
+            throw new NotAuthorOfCommentException("userId", userId.toString() ,"댓글을 수정할 권한이 없습니다.");
         }
 
         Comment updateComment = Comment.builder()
@@ -103,11 +105,11 @@ public class CommentService {
     public void deleteComment(Long commentId, Long userId) {
         // 댓글 확인
         Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundCommentException("commentId", commentId.toString(),"댓글을 찾을 수 없습니다."));
 
         // 댓글 소유자 확인
         if (!comment.getUser().getId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "댓글을 삭제할 권한이 없습니다.");
+            throw new NotAuthorOfCommentException("userId", userId.toString() ,"댓글을 수정할 권한이 없습니다.");
         }
 
         // 댓글 삭제
