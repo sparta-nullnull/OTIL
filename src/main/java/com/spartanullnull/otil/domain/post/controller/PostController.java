@@ -36,7 +36,6 @@ public class PostController {
         }
     }
 
-    //TODO
     @GetMapping
     public ResponseEntity<List<PostResponseDto>> getPostList() {
         List<PostResponseDto> responseDtoList = postService.getPostList();
