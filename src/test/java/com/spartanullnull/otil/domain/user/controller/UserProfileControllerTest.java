@@ -1,22 +1,23 @@
 package com.spartanullnull.otil.domain.user.controller;
 
-import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.spartanullnull.otil.domain.*;
+import com.fasterxml.jackson.databind.*;
+import com.spartanullnull.otil.domain.user.dto.*;
 import com.spartanullnull.otil.domain.user.service.*;
-import com.spartanullnull.otil.security.Impl.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.*;
 import org.springframework.boot.test.mock.mockito.*;
+import org.springframework.http.*;
 import org.springframework.test.web.servlet.*;
+import org.springframework.test.web.servlet.request.*;
 import org.springframework.test.web.servlet.setup.*;
 import org.springframework.web.context.*;
 
 @WebMvcTest(controllers = UserProfileController.class)
-//@ContextConfiguration(classes = {SecurityConfig.class})
-//@ContextConfiguration(classes = {WebSecurityConfig.class, SecurityConfig.class})
+//@TestPropertySource(locations = "classpath:application-test.yml")
 class UserProfileControllerTest {
 
     @Autowired
@@ -32,22 +33,47 @@ class UserProfileControllerTest {
     @BeforeEach
     void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-            .apply(springSecurity()).build();
+            .apply(springSecurity())
+            .build();
         this.mockMvc = MockMvcBuilders.standaloneSetup(
-            new UserProfileController(userProfileService)).build();
+                new UserProfileController(userProfileService))
+            .build();
     }
 
     @Test
-    @WithMockCustomUser
-    @DisplayName("PUT : 프로필 수정하기 요청을 처리합니다.")
-    public void PUT_프로필수정_핸들링() {
+    @DisplayName("GET : 프로필 조회하기 요청을 처리합니다.")
+    public void GET_프로필조회_핸들링() throws Exception {
         // GIVEN
-        UserDetailsImpl userDetails = mock(UserDetailsImpl.class);
-
+        Long userId = 1L;
         // WHEN
-        String accountId = userDetails.getUser().getAccountId();
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/profile"))
+            // THEN
+            .andExpect(status().isOk());
+    }
 
-        // THEN
-        System.out.println("accountId = " + accountId);
+    @Test
+//    @WithMockCustomUser
+    @DisplayName("PUT : 프로필 수정하기 요청을 처리합니다.")
+    public void PUT_프로필수정_핸들링() throws Exception {
+        // GIVEN
+        Long userId = 1L;
+        // WHEN
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                    .put("/api/users/profile")
+                    .content(new ObjectMapper().writeValueAsString(
+                        new UserProfileModifyResponseDto(
+                            "qwer1234",
+                            "qwer1234!@#",
+                            "jihoon123",
+                            "jihoon123@gmail.com",
+                            false
+                        )
+                    ))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            // THEN
+            .andExpect(status().isOk());
     }
 }
