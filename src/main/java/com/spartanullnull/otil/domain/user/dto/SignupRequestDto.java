@@ -1,6 +1,7 @@
 package com.spartanullnull.otil.domain.user.dto;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,16 @@ public class SignupRequestDto {
     @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\",./<>?\\\\|]{8,15}$")
     private String password;
 
+    @NotNull
     private String nickname;
 
     @Email
     private String email;
 
+    @NotNull
     private boolean admin = false;
 
+    @NotNull
     private String adminToken = "";
 
 }

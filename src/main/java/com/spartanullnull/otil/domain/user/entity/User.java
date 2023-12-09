@@ -1,6 +1,6 @@
 package com.spartanullnull.otil.domain.user.entity;
 
-import com.spartanullnull.otil.domain.reportpost.ReportPost;
+import com.spartanullnull.otil.domain.reportpost.entity.ReportPost;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.ArrayList;
@@ -29,13 +29,15 @@ public class User {
     private String nickname;
 
     @Column(nullable = false, unique = true)
+    @NotNull
     private String email;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @NotNull
     private UserRoleEnum role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<ReportPost> reportPost = new ArrayList<>();
 
     private Long kakaoId;
