@@ -35,6 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
 
 ### yml ###
 src/main/resources/application.yml
+=======
+application.yml
+>>>>>>> origin/develop

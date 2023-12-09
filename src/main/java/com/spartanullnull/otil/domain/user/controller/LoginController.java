@@ -27,28 +27,33 @@ public class LoginController {
             loginService.login(requestDto.getAccountId(), requestDto.getPassword());
             return ResponseEntity.ok().body(new CommonResponseDto("로그인 성공", HttpStatus.OK.value()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto("로그인 실패", HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest()
+                .body(new CommonResponseDto("로그인 실패", HttpStatus.BAD_REQUEST.value()));
         }
     }
 
     @PostMapping("/users/logout")
-    public ResponseEntity<CommonResponseDto> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<CommonResponseDto> logout(HttpServletRequest request,
+        HttpServletResponse response) {
         try {
             //인증 정보 조회
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null) {
                 //로그아웃 핸들러를 통해 인증 정보 및 사용자 세션 삭제
                 new SecurityContextLogoutHandler().logout(request, response, auth);
-                return ResponseEntity.ok().body(new CommonResponseDto("로그아웃 성공", HttpStatus.OK.value()));
+                return ResponseEntity.ok()
+                    .body(new CommonResponseDto("로그아웃 성공", HttpStatus.OK.value()));
             }
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto("로그아웃 실패", HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest()
+                .body(new CommonResponseDto("로그아웃 실패", HttpStatus.BAD_REQUEST.value()));
         }
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/user/kakao/callback")
-    public ResponseEntity<CommonResponseDto> kakaoLogin(@RequestParam String code, HttpServletResponse response)
+    public ResponseEntity<CommonResponseDto> kakaoLogin(@RequestParam String code,
+        HttpServletResponse response)
         throws JsonProcessingException {
         try {
             String token = kakaoService.kakaoLogin(code);
@@ -57,9 +62,11 @@ public class LoginController {
             cookie.setPath("/");
             response.addCookie(cookie);
 
-            return ResponseEntity.ok().body(new CommonResponseDto("Kakao 로그인 성공", HttpStatus.OK.value()));
+            return ResponseEntity.ok()
+                .body(new CommonResponseDto("Kakao 로그인 성공", HttpStatus.OK.value()));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto("Kakao 로그인 실패", HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest()
+                .body(new CommonResponseDto("Kakao 로그인 실패", HttpStatus.BAD_REQUEST.value()));
         }
     }
 }
