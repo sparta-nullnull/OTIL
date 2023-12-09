@@ -34,7 +34,7 @@ public class LikeService {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
-        if (likeRepository.existsByUser(user, comment)) {
+        if (likeRepository.existsByUserAndComment(user, comment)) {
             // 좋아요가 이미 존재하면 처리하지 않음
             return;
         }
@@ -57,8 +57,8 @@ public class LikeService {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
-        if (likeRepository.existsByUser(user, comment)) {
-            likeRepository.deleteByUser(user, comment);
+        if (likeRepository.existsByUserAndComment(user, comment)) {
+            likeRepository.deleteByUserAndComment(user, comment);
         }
     }
     /**

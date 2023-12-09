@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class LikeController {
 
-    private final LikeService commentLikeService;
+    private final LikeService likeService;
 
     // 댓글 좋아요 누르기 API
     @PostMapping("/{postId}/comments/{commentId}/like")
@@ -33,7 +33,7 @@ public class LikeController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인한 사용자만 댓글 좋아요를 누를 수 있습니다.");
         }
 
-        commentLikeService.createLike(userDetails.getUser().getId(), commentId);
+        likeService.createLike(userDetails.getUser().getId(), commentId);
         return ResponseEntity.ok("댓글 좋아요 성공!");
     }
 
@@ -49,14 +49,14 @@ public class LikeController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인한 사용자만 댓글 좋아요를 취소할 수 있습니다.");
         }
 
-        commentLikeService.deleteLike(userDetails.getUser().getId(), commentId);
+        likeService.deleteLike(userDetails.getUser().getId(), commentId);
         return ResponseEntity.ok("댓글 좋아요 취소!");
     }
 
     // 댓글 좋아요 개수 조회 API
     @GetMapping("/{postId}/comments/{commentId}/count")
     public ResponseEntity<String> getLikeCount(@PathVariable Long commentId) {
-        Long likeCount = commentLikeService.getLikeCount(commentId);
+        Long likeCount = likeService.getLikeCount(commentId);
         return ResponseEntity.ok("댓글 좋아요 : " + likeCount);
     }
 }
