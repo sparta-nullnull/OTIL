@@ -12,8 +12,10 @@ import com.spartanullnull.otil.domain.user.repository.*;
 import java.util.*;
 import java.util.stream.*;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -62,14 +64,24 @@ public class CommentService {
             .collect(Collectors.toList());
     }
 
-    // 댓글 수정 기능
-    // commentId        수정할 댓글의 Id
-    // requestDto       수정할 댓글의 내용이 담긴 Dto
-    // return           수정된 댓글의 응답 Dto
-    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
+    /**
+     * 댓글 수정 기능
+     *
+     * @param userId        요청을 보낸 사용자의 ID (로그인된 사용자)
+     * @param commentId     수정할 댓글의 ID
+     * @param requestDto    수정할 댓글의 내용이 담긴 Dto
+     * @return              수정된 댓글의 응답 Dto
+     */
+    @Transactional
+    public CommentResponseDto updateComment(Long userId ,Long commentId, CommentRequestDto requestDto) {
         // 기존 댓글 확인
         Comment existingComment = commentRepository.findById(commentId)
             .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+
+        // 댓글 소유자 확인
+        if (!existingComment.getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "댓글을 수정할 권한이 없습니다.");
+        }
 
         Comment updateComment = Comment.builder()
             .id(existingComment.getId())
@@ -82,9 +94,22 @@ public class CommentService {
         return CommentResponseDto.fromEntity(updateComment);
     }
 
-    // 댓글 삭제 기능
-    // comment Id       삭제할 댓글의 Id
-    public void deleteComment(Long commentId) {
+    /**
+     * 댓글 삭제 기능
+     *
+     * @param commentId     삭제할 댓글의 ID
+     * @param userId        요청을 보낸 사용자의 ID (로그인된 사용자)
+     */
+    public void deleteComment(Long commentId, Long userId) {
+        // 댓글 확인
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+
+        // 댓글 소유자 확인
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "댓글을 삭제할 권한이 없습니다.");
+        }
+
         // 댓글 삭제
         commentRepository.deleteById(commentId);
     }
