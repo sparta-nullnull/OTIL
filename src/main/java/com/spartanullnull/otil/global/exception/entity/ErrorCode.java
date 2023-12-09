@@ -1,7 +1,9 @@
-package com.spartanullnull.otil.global.exception;
+package com.spartanullnull.otil.global.exception.entity;
 
 import com.fasterxml.jackson.annotation.*;
+import com.spartanullnull.otil.global.exception.helper.*;
 import lombok.*;
+import org.springframework.context.*;
 import org.springframework.http.*;
 
 @Getter
@@ -15,7 +17,7 @@ public class ErrorCode {
 
     private HttpStatus status;
 
-    public static ErrorCode of(ErrorCase errorCase) {
+    public static ErrorCode of(ErrorCase errorCase) throws NoSuchMessageException {
         return new ErrorCode(
             ErrorCaseResolver.getMsg(errorCase),
             ErrorCaseResolver.getCode(errorCase),

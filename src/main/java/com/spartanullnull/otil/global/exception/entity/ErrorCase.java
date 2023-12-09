@@ -1,4 +1,4 @@
-package com.spartanullnull.otil.global.exception;
+package com.spartanullnull.otil.global.exception.entity;
 
 public enum ErrorCase {
     /* Common */
