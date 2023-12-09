@@ -1,5 +1,6 @@
-package com.spartanullnull.otil.domain.reportpost;
+package com.spartanullnull.otil.domain.reportpost.controller;
 
+import com.spartanullnull.otil.domain.reportpost.service.ReportPostService;
 import com.spartanullnull.otil.domain.reportpost.dto.ReportPostRequestDto;
 import com.spartanullnull.otil.domain.reportpost.dto.ReportPostResponseDto;
 import com.spartanullnull.otil.global.dto.CommonResponseDto;
@@ -36,7 +37,7 @@ public class ReportPostController {
                 userDetails.getUser());
             return ResponseEntity.ok().body(reportPostResponseDto);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -46,44 +47,47 @@ public class ReportPostController {
         @RequestParam("size") int size,
         @RequestParam("sortBy") String sortBy,
         @RequestParam("isAsc") boolean isAsc,
-        @RequestParam String password,
+        @RequestBody ReportPostRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl user) {
-        return reportPostService.getAllNewsFeeds(password, user.getUser(), page - 1, size, sortBy,
+        String password = requestDto.getPassword();
+        return reportPostService.getAllNewsFeeds(password, user.getUser(), page - 1,
+            size, sortBy,
             isAsc);
     }
 
     @GetMapping("/get/{postid}")
     public ResponseEntity<ReportPostResponseDto> getReport(@PathVariable Long postid,
-        @RequestParam String password, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @RequestBody ReportPostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
-            ReportPostResponseDto reportPostResponseDto = reportPostService.getReport(postid,
-                password, userDetails.getUser());
+            String password = requestDto.getPassword();
+            ReportPostResponseDto reportPostResponseDto = reportPostService.getReport(postid, password, userDetails.getUser());
             return ResponseEntity.ok().body(reportPostResponseDto);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.badRequest().build();
         }
     }
 
-    @PutMapping("/{postid}")
-    public ResponseEntity<ReportPostResponseDto> putReport(@PathVariable Long postid,
-        @RequestParam String password, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PutMapping("/update/{postid}")
+    public ResponseEntity<ReportPostResponseDto> updateReport(
+        @RequestBody ReportPostRequestDto requestDto, @PathVariable Long postid,@AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
-            ReportPostResponseDto reportPostResponseDto = reportPostService.putReport(postid,
-                password, userDetails.getUser());
+            ReportPostResponseDto reportPostResponseDto = reportPostService.updateReport(postid,
+                requestDto,userDetails.getUser());
             return ResponseEntity.ok().body(reportPostResponseDto);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.badRequest().build();
         }
     }
 
-    @DeleteMapping("/{postid}")
+    @DeleteMapping("delete/{postid}")
     public ResponseEntity<CommonResponseDto> deleteReport(@PathVariable Long postid,
-        @RequestParam String password, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @RequestBody ReportPostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
-            reportPostService.deleteReport(postid, password, userDetails.getUser());
+            reportPostService.deleteReport(postid, requestDto.getPassword(), userDetails.getUser());
             return ResponseEntity.ok().body(new CommonResponseDto("삭제 성공", HttpStatus.OK.value()));
         } catch (RejectedExecutionException | IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest()
+                .body(new CommonResponseDto("삭제 실패", HttpStatus.BAD_REQUEST.value()));
         }
     }
 }

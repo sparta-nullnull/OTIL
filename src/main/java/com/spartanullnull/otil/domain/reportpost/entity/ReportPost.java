@@ -1,4 +1,4 @@
-package com.spartanullnull.otil.domain.reportpost;
+package com.spartanullnull.otil.domain.reportpost.entity;
 
 import com.spartanullnull.otil.domain.reportpost.dto.ReportPostRequestDto;
 import com.spartanullnull.otil.domain.user.entity.User;
@@ -29,9 +29,11 @@ public class ReportPost {
     private User user;
 
     @Column
-    private String username;
+    @NotNull
+    private String name;
 
     @Column
+    @NotNull
     private String title;
 
     @Column
@@ -40,12 +42,24 @@ public class ReportPost {
 
     public ReportPost(ReportPostRequestDto requestDto) {
         this.id = requestDto.getId();
-        this.username = requestDto.getUsername();
+        this.name = requestDto.getName();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setTitle(String title){
+        this.title = title;
+    }
+
+    public void setContent(String content){
+        this.content = content;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 }
