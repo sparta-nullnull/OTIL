@@ -48,12 +48,13 @@ public class PostService {
         return PostResponseDto.of(post, categories);
     }
 
-    public PostResponseDto modifyPost(Long postId, User user, PostRequestDto requestDto) {
+    public PostResponseDto modifyPost(Long postId, User user,
+        PostRequestDto requestDto) {
         Post post = findById(postId);
         checkAuthority(post, user.getAccountId());
 
         post.modifyPost(requestDto.getTitle(), requestDto.getContent(),
-            categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post));
+            categoryService.getCategoriesByRequest(requestDto.getCategoryList()));
 
         return PostResponseDto.of(post);
     }

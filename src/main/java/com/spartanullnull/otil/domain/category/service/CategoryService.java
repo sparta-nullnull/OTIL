@@ -6,12 +6,14 @@ import com.spartanullnull.otil.domain.post.entity.*;
 import java.util.*;
 import java.util.function.*;
 import lombok.*;
+import lombok.extern.slf4j.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -24,27 +26,32 @@ public class CategoryService {
      * @return 게시글과 연관된 카테고리들 반환
      * @author 임지훈
      */
-    public List<Category> buildAndSaveCategoriesByRequest(List<String> categoryInputs, Post post) {
+    public List<Category> buildAndSaveCategoriesByRequest(List<String> categoryInputs,
+        Post post) {
         // 카테고리 문자열 리스트 -> 카테고리 엔티티 리스트
         List<Category> categories = getCategoriesByRequest(categoryInputs);
 
         // 기존 카테고리가 아닌 카테고리들에 대해 저장
-        List<Category> notExistingCategories = categories.stream()
+        categories.forEach(
+            category -> {
+                if (categoryRepository.findByCategoryName(category.getCategoryName()).isEmpty()) {
+                    categoryRepository.save(category);
+                    category.updatePost(post);
+                }
+            }
+        );
+
+        // 기존 + 새로 저장된 카테고리들 반환
+        return categories;
+    }
+
+    public List<Category> getNotExistingCategories(List<Category> categories) { // C#, Python
+        return categories.stream()
             .filter(category ->
                 categoryRepository
                     .findByCategoryName(category.getCategoryName())
                     .isEmpty()
             ).toList();
-        categoryRepository.saveAll(notExistingCategories);
-
-        // Post와 연관관계 설정
-        categories.forEach(
-            category ->
-                category.updatePost(post)
-        );
-
-        // 기존 + 새로 저장된 카테고리들 반환
-        return categories;
     }
 
     /**

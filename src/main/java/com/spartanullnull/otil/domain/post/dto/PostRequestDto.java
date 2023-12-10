@@ -1,10 +1,11 @@
 package com.spartanullnull.otil.domain.post.dto;
 
-import com.spartanullnull.otil.domain.category.entity.*;
 import java.util.*;
 import lombok.*;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostRequestDto {
 
     private String title;
