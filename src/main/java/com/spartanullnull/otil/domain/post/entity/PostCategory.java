@@ -2,6 +2,7 @@ package com.spartanullnull.otil.domain.post.entity;
 
 import com.fasterxml.jackson.annotation.*;
 import com.spartanullnull.otil.domain.category.entity.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.*;
@@ -23,7 +24,7 @@ public class PostCategory {
 
     @JsonIgnore
     @JoinColumn(name = "category_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
     private Category category;
 
     @Builder

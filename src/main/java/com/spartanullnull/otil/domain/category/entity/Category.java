@@ -15,14 +15,14 @@ import lombok.*;
 public class Category {
 
     @JsonIgnore
-    @OneToMany(targetEntity = PostCategory.class, mappedBy = "category", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(targetEntity = PostCategory.class, mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<PostCategory> postCategories = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String categoryName;
 
     @Override
