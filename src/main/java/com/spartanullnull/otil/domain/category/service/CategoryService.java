@@ -32,7 +32,7 @@ public class CategoryService {
         List<Category> notExistingCategories = categories.stream()
             .filter(category ->
                 categoryRepository
-                    .findByCategoryNameAndPost(category.getCategoryName(), post)
+                    .findByCategoryName(category.getCategoryName())
                     .isEmpty()
             ).toList();
         categoryRepository.saveAll(notExistingCategories);
@@ -53,7 +53,7 @@ public class CategoryService {
      * @param categoryInputs 입력문자열 리스트
      * @return 카테고리 엔티티 리스트
      */
-    private List<Category> getCategoriesByRequest(List<String> categoryInputs) {
+    public List<Category> getCategoriesByRequest(List<String> categoryInputs) {
         return categoryInputs.stream()
             .map(buildCategoryByRequest()
             ).toList();
@@ -70,35 +70,4 @@ public class CategoryService {
                 .categoryName(categoryInput)
                 .build();
     }
-//    /**
-//     * 기존 카테고리를 제외한 새로운 카테고리 리스트 생성
-//     *
-//     * @param categoryInputs 카테고리 문자열들
-//     * @param post           카테고리 관련 게시글
-//     * @return 생성된 카테고리 엔티티들
-//     * @author 임지훈
-//     */
-//    public List<Category> createNewCategoriesExcludingExisting(List<String> categoryInputs,
-//        Post post) {
-//        return categoryInputs
-//            .stream()
-//            .filter(isNotExistingCategory())
-//            .map(buildCategoryByRequestInput())
-//            .toList();
-//    }
-//
-//    /**
-//     * 주어진 카테고리 입력문자열을 통해 categoryRepository 에 저장된 기존 카테고리가 아닌지 검증
-//     *
-//     * @return 기존 카테고리에 대한 입력문자열이 아니라면 true, 이라면 false
-//     * @author 임지훈
-//     */
-//    private Predicate<String> isNotExistingCategory() {
-//        return categoryName ->
-//            categoryRepository
-//                .findByCategoryName(categoryName)
-//                .isEmpty();
-//    }
-//
-
 }
