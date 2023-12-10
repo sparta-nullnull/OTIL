@@ -22,19 +22,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostCategoryRepository postCategoryRepository;
 
-    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
-        Post post = postRepository.save(Post.builder()
-            .user(user)
-            .title(requestDto.getTitle())
-            .content(requestDto.getContent())
-            .build());
-
-        List<Category> categories =
-            categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post);
-
-        return PostResponseDto.of(post, categories);
-    }
-
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         Post post = findById(postId);
@@ -48,35 +35,25 @@ public class PostService {
             .collect(Collectors.toList());
     }
 
-    public PostResponseDto modifyPost(Long postId, User user,
-        PostRequestDto requestDto) {
+    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+        Post post = postRepository.save(Post.builder()
+            .user(user)
+            .title(requestDto.getTitle())
+            .content(requestDto.getContent())
+            .build());
+
+        List<Category> categories =
+            categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post);
+
+        return PostResponseDto.of(post, categories);
+    }
+
+    public PostResponseDto modifyPost(Long postId, User user, PostRequestDto requestDto) {
         Post post = findById(postId);
         checkAuthority(post, user.getAccountId());
 
-        // b,c,d,e
-        List<Category> categoriesByRequest = categoryService.getCategoriesByRequest(
-            requestDto.getCategoryList());
-        // a,b
-        List<Category> categoriesOfPost = postCategoryRepository.findByPost(post);
-        categoriesByRequest.stream()
-            .filter(categoriesOfPost::contains);
-
-        // 수정요청 카테고리에 관하여 기존 카테고리 끊기 :: a 에 관해 끊기
-        categoriesOfPost.removeAll(categoriesByRequest);
-        post.getPostCategories()
-            .forEach(
-                postCategory -> {
-                    for (Category priorCategory : categoriesOfPost) {
-                        if (postCategory.getCategory().equals(priorCategory)) {
-                            postCategory.getCategory().getPostCategories().remove(postCategory);
-                        }
-                    }
-                }
-            );
-        // 수정요청 카테고리에 관하여 새로운 카테고리 추가하기  :: c,d,e
-//        post.getPostCategories()
-//            .forEach(
-//
+        post.modifyPost(requestDto.getTitle(), requestDto.getContent(),
+            categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post));
 
         return PostResponseDto.of(post);
     }
