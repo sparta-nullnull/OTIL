@@ -54,4 +54,9 @@ public class Post extends BaseTime {
         this.title = title;
         this.content = content;
     }
+
+    public void modifyPost(PostRequestDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+    }
 }
