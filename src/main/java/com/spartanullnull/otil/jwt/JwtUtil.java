@@ -27,6 +27,7 @@ public class JwtUtil {
     // 토큰 만료시간
     private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
     private Key key;
@@ -38,12 +39,12 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username, UserRoleEnum role) {
+    public String createToken(String accountId, UserRoleEnum role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
             Jwts.builder()
-                .setSubject(username) // 사용자 식별자값(ID)
+                .setSubject(accountId) // 사용자 식별자값(ID)
                 .claim(AUTHORIZATION_KEY, role) // 사용자 권한
                 .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
                 .setIssuedAt(date) // 발급일
@@ -64,7 +65,7 @@ public class JwtUtil {
     public boolean hasValidatedToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return false;
+            return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
@@ -74,7 +75,7 @@ public class JwtUtil {
         } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }
-        return true;
+        return false;
     }
 
     // 토큰에서 사용자 정보 가져오기
@@ -82,12 +83,12 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
-    //username, role 확인 후 createToken 생성
+    //accountId, role 확인 후 createToken 생성
     public String generateToken(UserDetailsImpl userDetails) {
-        String username = userDetails.getUsername();
+        String accountId = userDetails.getUsername();
         UserRoleEnum role = userDetails.getUser().getRole();
 
-        return createToken(username, role);
+        return createToken(accountId, role);
     }
 
 }

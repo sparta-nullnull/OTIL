@@ -1,17 +1,21 @@
 package com.spartanullnull.otil.jwt;
 
-import com.spartanullnull.otil.security.Impl.*;
-import io.jsonwebtoken.*;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import java.io.*;
-import lombok.extern.slf4j.*;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.*;
-import org.springframework.security.core.context.*;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.util.*;
-import org.springframework.web.filter.*;
+
+import com.spartanullnull.otil.security.Impl.UserDetailsServiceImpl;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
@@ -25,14 +29,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
-        FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
         String tokenValue = jwtUtil.getJwtFromHeader(req);
 
         if (StringUtils.hasText(tokenValue)) {
 
-            if (jwtUtil.hasValidatedToken(tokenValue)) {
+            if (!jwtUtil.hasValidatedToken(tokenValue)) {
                 log.error("Token Error");
                 return;
             }
@@ -62,7 +65,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     // 인증 객체 생성
     private Authentication createAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, null,
-            userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
