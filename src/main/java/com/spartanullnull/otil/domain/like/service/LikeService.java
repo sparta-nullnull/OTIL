@@ -1,12 +1,13 @@
 package com.spartanullnull.otil.domain.like.service;
 
 import com.spartanullnull.otil.domain.comment.entity.Comment;
+import com.spartanullnull.otil.domain.comment.exception.NotAuthorOfCommentException;
 import com.spartanullnull.otil.domain.comment.repository.CommentRepository;
 import com.spartanullnull.otil.domain.like.entity.Like;
 import com.spartanullnull.otil.domain.like.repository.LikeRepository;
 import com.spartanullnull.otil.domain.user.entity.User;
+import com.spartanullnull.otil.domain.user.exception.UserNotFoundException;
 import com.spartanullnull.otil.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +30,10 @@ public class LikeService {
     public void createLike(Long userId, Long commentId) {
 
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("userId", userId.toString(),"사용자를 찾을 수 없습니다."));
 
         Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotAuthorOfCommentException("userId", userId.toString() ,"댓글을 찾을 수 없습니다."));
 
         if (likeRepository.existsByUserAndComment(user, comment)) {
             // 좋아요가 이미 존재하면 처리하지 않음
@@ -52,10 +53,10 @@ public class LikeService {
     public void deleteLike(Long userId, Long commentId) {
 
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("userId", userId.toString(),"사용자를 찾을 수 없습니다."));
 
         Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotAuthorOfCommentException("userId", userId.toString() ,"댓글을 찾을 수 없습니다."));
 
         if (likeRepository.existsByUserAndComment(user, comment)) {
             likeRepository.deleteByUserAndComment(user, comment);

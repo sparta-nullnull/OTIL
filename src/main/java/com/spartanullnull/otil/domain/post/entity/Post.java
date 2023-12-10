@@ -60,21 +60,12 @@ public class Post extends BaseTime {
         this.title = title;
         this.content = content;
     }
-
+  
     public void modifyPost(PostRequestDto requestDto, List<Category> categories) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         List<Category> categoriesOfThisPost = this.postCategories.stream()
             .map(PostCategory::getCategory)
             .toList();
-//        categories.forEach(
-//            category ->
-//                this.postCategories.add(
-//                    PostCategory.builder()
-//                        .category(category)
-//                        .post(this)
-//                        .build()
-//                )
-//        );
     }
 }

@@ -1,10 +1,12 @@
 package com.spartanullnull.otil.domain.recommend.service;
 
+import com.spartanullnull.otil.domain.comment.exception.NotAuthorOfCommentException;
 import com.spartanullnull.otil.domain.post.entity.Post;
 import com.spartanullnull.otil.domain.post.repository.PostRepository;
 import com.spartanullnull.otil.domain.recommend.entity.Recommend;
 import com.spartanullnull.otil.domain.recommend.repository.RecommendRepository;
 import com.spartanullnull.otil.domain.user.entity.User;
+import com.spartanullnull.otil.domain.user.exception.UserNotFoundException;
 import com.spartanullnull.otil.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -53,10 +55,10 @@ public class RecommendService {
     @Transactional
     public void deleteRecommend(Long userId, Long postId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("userId", userId.toString(),"사용자를 찾을 수 없습니다."));
 
         Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new EntityNotFoundException("게시물을 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotAuthorOfCommentException("userId", userId.toString() ,"게시물을 찾을 수 없습니다."));
 
         if (recommendRepository.existsByUserAndPost(user, post)) {
             recommendRepository.deleteByUserAndPost(user, post);
@@ -89,23 +91,4 @@ public class RecommendService {
         }
         return top3Posts;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
