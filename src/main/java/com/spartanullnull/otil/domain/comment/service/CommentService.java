@@ -1,23 +1,23 @@
 package com.spartanullnull.otil.domain.comment.service;
 
-import com.spartanullnull.otil.domain.comment.dto.*;
-import com.spartanullnull.otil.domain.comment.entity.*;
+import com.spartanullnull.otil.domain.comment.dto.CommentRequestDto;
+import com.spartanullnull.otil.domain.comment.dto.CommentResponseDto;
+import com.spartanullnull.otil.domain.comment.entity.Comment;
 import com.spartanullnull.otil.domain.comment.exception.NotAuthorOfCommentException;
 import com.spartanullnull.otil.domain.comment.exception.NotFoundCommentException;
-import com.spartanullnull.otil.domain.comment.repository.*;
-import com.spartanullnull.otil.domain.post.entity.*;
-import com.spartanullnull.otil.domain.post.exception.*;
-import com.spartanullnull.otil.domain.post.repository.*;
-import com.spartanullnull.otil.domain.user.entity.*;
-import com.spartanullnull.otil.domain.user.exception.*;
-import com.spartanullnull.otil.domain.user.repository.*;
-import java.util.*;
-import java.util.stream.*;
-import lombok.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.*;
-import org.springframework.transaction.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import com.spartanullnull.otil.domain.comment.repository.CommentRepository;
+import com.spartanullnull.otil.domain.like.service.LikeService;
+import com.spartanullnull.otil.domain.post.entity.Post;
+import com.spartanullnull.otil.domain.post.exception.NotFoundPostException;
+import com.spartanullnull.otil.domain.post.repository.PostRepository;
+import com.spartanullnull.otil.domain.user.entity.User;
+import com.spartanullnull.otil.domain.user.exception.UserNotFoundException;
+import com.spartanullnull.otil.domain.user.repository.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final LikeService likeService;
 
     // 댓글 작성 기능
     // postId       작성된 댓글이 속한 TIL의 Id
@@ -50,7 +51,7 @@ public class CommentService {
 
         Comment savedComment = commentRepository.save(comment);
 
-        return CommentResponseDto.fromEntity(savedComment);
+        return CommentResponseDto.fromEntity(savedComment, likeService.getLikeCount(comment.getId()));
     }
 
     // 특정 게시글에 대한 댓글 목록 조회 기능
@@ -62,7 +63,10 @@ public class CommentService {
 
         // 댓글 목록을 Dto로 변환하여 반환
         return comments.stream()
-            .map(CommentResponseDto::fromEntity)
+            .map(comment -> {
+                Long likeCount = likeService.getLikeCount(comment.getId());
+                return CommentResponseDto.fromEntity(comment, likeCount);
+            })
             .collect(Collectors.toList());
     }
 
@@ -93,7 +97,7 @@ public class CommentService {
             .build();
         commentRepository.save(updateComment);
 
-        return CommentResponseDto.fromEntity(updateComment);
+        return CommentResponseDto.fromEntity(updateComment, likeService.getLikeCount(commentId));
     }
 
     /**
