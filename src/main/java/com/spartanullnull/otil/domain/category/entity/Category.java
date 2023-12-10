@@ -16,7 +16,6 @@ public class Category {
 
     @JsonIgnore
     @OneToMany(targetEntity = PostCategory.class, mappedBy = "category", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn(name = "post_id")
     private final List<PostCategory> postCategories = new ArrayList<>();
 
     @Id

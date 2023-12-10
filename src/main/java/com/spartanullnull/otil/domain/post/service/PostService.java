@@ -20,6 +20,7 @@ public class PostService {
 
     private final CategoryService categoryService;
     private final PostRepository postRepository;
+    private final PostCategoryRepository postCategoryRepository;
 
     public PostResponseDto createPost(PostRequestDto requestDto, User user) {
         Post post = postRepository.save(Post.builder()
@@ -52,9 +53,30 @@ public class PostService {
         Post post = findById(postId);
         checkAuthority(post, user.getAccountId());
 
-        List<Category> categories = categoryService.buildAndSaveCategoriesByRequest(
-            requestDto.getCategoryList(), post);
-        post.modifyPost(requestDto, categories);
+        // b,c,d,e
+        List<Category> categoriesByRequest = categoryService.getCategoriesByRequest(
+            requestDto.getCategoryList());
+        // a,b
+        List<Category> categoriesOfPost = postCategoryRepository.findByPost(post);
+        categoriesByRequest.stream()
+            .filter(categoriesOfPost::contains);
+
+        // 수정요청 카테고리에 관하여 기존 카테고리 끊기 :: a 에 관해 끊기
+        categoriesOfPost.removeAll(categoriesByRequest);
+        post.getPostCategories()
+            .forEach(
+                postCategory -> {
+                    for (Category priorCategory : categoriesOfPost) {
+                        if (postCategory.getCategory().equals(priorCategory)) {
+                            postCategory.getCategory().getPostCategories().remove(postCategory);
+                        }
+                    }
+                }
+            );
+        // 수정요청 카테고리에 관하여 새로운 카테고리 추가하기  :: c,d,e
+//        post.getPostCategories()
+//            .forEach(
+//
 
         return PostResponseDto.of(post);
     }

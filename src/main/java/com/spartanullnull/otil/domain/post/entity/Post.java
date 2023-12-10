@@ -67,7 +67,6 @@ public class Post extends BaseTime {
         List<Category> categoriesOfThisPost = this.postCategories.stream()
             .map(PostCategory::getCategory)
             .toList();
-
 //        categories.forEach(
 //            category ->
 //                this.postCategories.add(
