@@ -23,6 +23,7 @@ public class SignupService {
     public void singup(SignupRequestDto requestDto) {
         String accountId = requestDto.getAccountId();
         String rawPassword = requestDto.getPassword();
+
         String password = passwordEncoder.encode(rawPassword);
 
         Optional<User> checkAccountId = userRepository.findByAccountId(accountId);
