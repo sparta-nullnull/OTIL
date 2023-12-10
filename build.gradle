@@ -30,7 +30,7 @@ dependencies {
     /* AOP */
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     /* Message Source */
-    implementation 'net.rakugakibox.util:yaml-resource-bundle'
+    implementation 'net.rakugakibox.util:yaml-resource-bundle:1.2'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'

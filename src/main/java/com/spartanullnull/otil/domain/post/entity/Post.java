@@ -18,15 +18,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseTime {
 
-    @JsonIgnore
-    @OneToMany(targetEntity = Comment.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Comment> comments = new ArrayList<>();
-    @JsonIgnore
-    @OneToMany(targetEntity = Category.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Category> categories = new ArrayList<>();
-    @JsonIgnore
-    @OneToMany(targetEntity = Recommend.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Recommend> recommends = new ArrayList<>();
     @Id
     @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +26,20 @@ public class Post extends BaseTime {
     private String title;
     @Column(nullable = false)
     private String content;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @JsonIgnore
+    @OneToMany(targetEntity = Comment.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Comment> comments = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(targetEntity = Category.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Category> categoryList = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(targetEntity = Recommend.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Recommend> recommends = new ArrayList<>();
 
     public Post(String title, String content, User user) {
         this.title = title;
@@ -54,10 +55,5 @@ public class Post extends BaseTime {
     public Post(String title, String content) {
         this.title = title;
         this.content = content;
-    }
-
-    public void modifyPost(PostRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
     }
 }
