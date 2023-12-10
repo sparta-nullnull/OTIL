@@ -1,7 +1,10 @@
 package com.spartanullnull.otil.domain.post.service;
 
+import com.spartanullnull.otil.domain.category.entity.*;
+import com.spartanullnull.otil.domain.category.repository.*;
 import com.spartanullnull.otil.domain.post.dto.*;
 import com.spartanullnull.otil.domain.post.entity.*;
+import com.spartanullnull.otil.domain.post.exception.*;
 import com.spartanullnull.otil.domain.post.repository.*;
 import com.spartanullnull.otil.domain.user.entity.*;
 import java.util.*;
@@ -15,16 +18,26 @@ import org.springframework.transaction.annotation.*;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final CategoryRepository categoryRepository;
 
+    @Transactional
     public PostResponseDto createPost(PostRequestDto requestDto, User user) {
-        Post post = Post.builder()
+        Post post = postRepository.save(Post.builder()
             .user(user)
             .title(requestDto.getTitle())
             .content(requestDto.getContent())
-            .build();
-        postRepository.save(post);
+            .build());
 
-        return PostResponseDto.of(post);
+        List<Category> categoryList = new ArrayList<>();
+        requestDto.getCategoryList().forEach(category -> {
+            categoryList.add(Category.builder()
+                .categoryName(category)
+                .post(post)
+                .build());
+        });
+        categoryRepository.saveAll(categoryList);
+
+        return PostResponseDto.of(post, categoryList);
     }
 
     @Transactional(readOnly = true)
@@ -33,7 +46,6 @@ public class PostService {
         return PostResponseDto.of(post);
     }
 
-    //TODO
     public List<PostResponseDto> getPostList() {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         return postList.stream()
@@ -45,7 +57,7 @@ public class PostService {
     public PostResponseDto modifyPost(Long postId, User user,
         PostRequestDto requestDto) {
         Post post = findById(postId);
-        findByUsername(post, user.getAccountId());
+        checkAuthority(post, user.getAccountId());
         post.modifyPost(requestDto);
         return PostResponseDto.of(post);
     }
@@ -53,18 +65,19 @@ public class PostService {
     @Transactional
     public void deletePost(Long postId, User user) {
         Post post = findById(postId);
-        findByUsername(post, user.getAccountId());
+        checkAuthority(post, user.getAccountId());
         postRepository.delete(post);
     }
 
     public Post findById(Long postId) {
         return postRepository.findById(postId)
-            .orElseThrow(() -> new NullPointerException("해당 TIL이 존재하지 않아요!"));
+            .orElseThrow(
+                () -> new NotFoundPostException("postId", postId.toString(), "해당 TIL이 존재하지 않아요!"));
     }
 
-    private void findByUsername(Post post, String accountId) {
+    private void checkAuthority(Post post, String accountId) {
         if (!post.getUser().getAccountId().equals(accountId)) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있어요!");
+            throw new NotAuthorOfPostException("accountId", accountId, "작성자만 할 수 있는 기능이에요!");
         }
     }
 }
