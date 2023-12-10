@@ -58,7 +58,7 @@ public class PostService {
         PostRequestDto requestDto) {
         Post post = findById(postId);
         checkAuthority(post, user.getAccountId());
-        post.modifyPost(requestDto);
+//        post.modifyPost(requestDto);
         return PostResponseDto.of(post);
     }
 
