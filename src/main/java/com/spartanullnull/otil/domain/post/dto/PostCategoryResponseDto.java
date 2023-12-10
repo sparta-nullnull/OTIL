@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostResponseDto extends CommonResponseDto {
+public class PostCategoryResponseDto extends CommonResponseDto {
 
     private Long id;
     private String accountId;
@@ -19,10 +19,20 @@ public class PostResponseDto extends CommonResponseDto {
     private String content;
     private List<String> categoryList;
     private LocalDateTime createdAt;
-    private List<PostCommentResponseDto> commentList;
 
-    public static PostResponseDto of(Post post, List<PostCommentResponseDto> responseDtoList) {
-        return PostResponseDto.builder()
+    public static PostCategoryResponseDto of(Post post, List<Category> categoryList) {
+        return PostCategoryResponseDto.builder()
+            .id(post.getId())
+            .accountId(post.getUser().getAccountId())
+            .title(post.getTitle())
+            .content(post.getContent())
+            .categoryList(
+                categoryList.stream().map(Category::getCategoryName).toList())
+            .createdAt(post.getCreatedAt())
+            .build();
+    }
+    public static PostCategoryResponseDto of(Post post) {
+        return PostCategoryResponseDto.builder()
             .id(post.getId())
             .accountId(post.getUser().getAccountId())
             .title(post.getTitle())
@@ -31,11 +41,13 @@ public class PostResponseDto extends CommonResponseDto {
                 post.getPostCategories()
                     .stream()
                     .filter(postCategory -> postCategory.getPost().equals(post))
-                    .map(postCategory -> postCategory.getCategory().getCategoryName())
+                    .map(PostCategory::getCategory)
+                    .toList()
+                    .stream().map(Category::getCategoryName)
                     .toList()
             )
-            .commentList(responseDtoList)
             .createdAt(post.getCreatedAt())
             .build();
     }
+
 }

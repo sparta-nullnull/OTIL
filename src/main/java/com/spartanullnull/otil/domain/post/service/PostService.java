@@ -2,6 +2,7 @@ package com.spartanullnull.otil.domain.post.service;
 
 import com.spartanullnull.otil.domain.category.entity.*;
 import com.spartanullnull.otil.domain.category.service.*;
+import com.spartanullnull.otil.domain.comment.entity.*;
 import com.spartanullnull.otil.domain.post.dto.*;
 import com.spartanullnull.otil.domain.post.entity.*;
 import com.spartanullnull.otil.domain.post.exception.*;
@@ -20,22 +21,22 @@ public class PostService {
 
     private final CategoryService categoryService;
     private final PostRepository postRepository;
-    private final PostCategoryRepository postCategoryRepository;
 
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         Post post = findById(postId);
-        return PostResponseDto.of(post);
+        List<PostCommentResponseDto> commentResponseDtoList = commentList(post);
+        return PostResponseDto.of(post,commentResponseDtoList);
     }
 
-    public List<PostResponseDto> getPostList() {
+    public List<PostCategoryResponseDto> getPostList() {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         return postList.stream()
-            .map(PostResponseDto::of)
+            .map(PostCategoryResponseDto::of)
             .collect(Collectors.toList());
     }
 
-    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+    public PostCategoryResponseDto createPost(PostRequestDto requestDto, User user) {
         Post post = postRepository.save(Post.builder()
             .user(user)
             .title(requestDto.getTitle())
@@ -45,18 +46,17 @@ public class PostService {
         List<Category> categories =
             categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post);
 
-        return PostResponseDto.of(post, categories);
+        return PostCategoryResponseDto.of(post, categories);
     }
 
-    public PostResponseDto modifyPost(Long postId, User user,
-        PostRequestDto requestDto) {
+    public PostCategoryResponseDto modifyPost(Long postId, User user, PostRequestDto requestDto) {
         Post post = findById(postId);
         checkAuthority(post, user.getAccountId());
 
         post.modifyPost(requestDto.getTitle(), requestDto.getContent(),
             categoryService.getCategoriesByRequest(requestDto.getCategoryList()));
 
-        return PostResponseDto.of(post);
+        return PostCategoryResponseDto.of(post);
     }
 
 
@@ -73,7 +73,7 @@ public class PostService {
      * @return post엔티티 혹은 예외 처리
      * @author 김한신
      */
-    public Post findById(Long postId) {
+    public Post findById(Long postId) {//유저를 못가져옴
         return postRepository.findById(postId)
             .orElseThrow(
                 () -> new NotFoundPostException("postId", postId.toString(), "해당 TIL이 존재하지 않아요!"));
@@ -90,5 +90,14 @@ public class PostService {
         if (!post.getUser().getAccountId().equals(accountId)) {
             throw new NotAuthorOfPostException("accountId", accountId, "작성자만 할 수 있는 기능이에요!");
         }
+    }
+    private List<PostCommentResponseDto> commentList(Post post) {
+        List<PostCommentResponseDto> postCommentResponseDtoList = new ArrayList<>();
+        List<Comment> commentList = post.getComments();
+
+        for (Comment comment : commentList) {
+            postCommentResponseDtoList.add(PostCommentResponseDto.of(comment));
+        }
+        return postCommentResponseDtoList;
     }
 }
