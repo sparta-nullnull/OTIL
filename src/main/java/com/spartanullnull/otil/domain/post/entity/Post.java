@@ -18,15 +18,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseTime {
 
-    @JsonIgnore
-    @OneToMany(targetEntity = Comment.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Comment> comments = new ArrayList<>();
-    @JsonIgnore
-    @OneToMany(targetEntity = Category.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Category> categories = new ArrayList<>();
-    @JsonIgnore
-    @OneToMany(targetEntity = Recommend.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Recommend> recommends = new ArrayList<>();
     @Id
     @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +26,20 @@ public class Post extends BaseTime {
     private String title;
     @Column(nullable = false)
     private String content;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    @JsonIgnore
+    @OneToMany(targetEntity = Comment.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Comment> comments = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(targetEntity = Category.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Category> categoryList = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(targetEntity = Recommend.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Recommend> recommends = new ArrayList<>();
 
     public Post(String title, String content, User user) {
         this.title = title;
