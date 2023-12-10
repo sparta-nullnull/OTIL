@@ -23,18 +23,12 @@ public class ApiPerformanceAspect {
     @Around("checkTime()")
     public Optional<?> checkIfLoggedUserIsAuthorOfResource(ProceedingJoinPoint joinPoint)
         throws Throwable {
-        Optional<Object> performance = Optional.empty();
-        try {
-            long start = System.currentTimeMillis();
-            performance = Optional.of(joinPoint.proceed());
-            long end = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
+        Optional<Object> performance = Optional.of(joinPoint.proceed());
+        long end = System.currentTimeMillis();
 
-            log.info("targetName : " + joinPoint.getTarget().toString());
-            log.info("Performance Time : " + (end - start));
-        } catch (Throwable throwable) {
-            log.error("Message of Thrown : " + throwable.getMessage());
-            log.error("Cause of Thrown : " + throwable.getCause());
-        }
+        log.info("targetName : " + joinPoint.getTarget().toString());
+        log.info("Performance Time : " + (end - start));
         return performance;
     }
 }
