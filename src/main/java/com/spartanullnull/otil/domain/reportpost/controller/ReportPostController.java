@@ -6,7 +6,6 @@ import com.spartanullnull.otil.domain.reportpost.dto.ReportPostResponseDto;
 import com.spartanullnull.otil.domain.user.entity.UserRoleEnum;
 import com.spartanullnull.otil.global.dto.CommonResponseDto;
 import com.spartanullnull.otil.security.Impl.UserDetailsImpl;
-import java.util.concurrent.RejectedExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -35,13 +34,12 @@ public class ReportPostController {
     public ResponseEntity<ReportPostResponseDto> createReport(
         @RequestBody ReportPostRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        try {
+        if (isMatches(requestDto, userDetails)) {
             ReportPostResponseDto reportPostResponseDto = reportPostService.createReport(requestDto,
                 userDetails.getUser());
             return ResponseEntity.ok().body(reportPostResponseDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
         }
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/gets/user")
@@ -53,10 +51,11 @@ public class ReportPostController {
         @RequestBody ReportPostRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl user) {
         System.out.println(user.getUser().getRole());
-        if (isValidUser(user, requestDto) && user.getUser().getRole() == UserRoleEnum.USER) {
-            Page<ReportPostResponseDto> reports = reportPostService.getUserAllReportPost(user.getUser(), page - 1, size, sortBy, isAsc);
+        if (getsValidUser(user, requestDto) && user.getUser().getRole() == UserRoleEnum.USER) {
+            Page<ReportPostResponseDto> reports = reportPostService.getUserAllReportPost(
+                user.getUser(), page - 1, size, sortBy, isAsc);
             return ResponseEntity.ok().body(reports);
-        }else{
+        } else {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -69,8 +68,9 @@ public class ReportPostController {
         @RequestParam("isAsc") boolean isAsc,
         @RequestBody ReportPostRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl user) {
-        if (isValidAdmin(user, requestDto) && user.getUser().getRole() == UserRoleEnum.ADMIN) {
-            Page<ReportPostResponseDto> reports = reportPostService.getAdminAllReportPost(page - 1, size, sortBy, isAsc);
+        if (getsValidAdmin(user, requestDto) && user.getUser().getRole() == UserRoleEnum.ADMIN) {
+            Page<ReportPostResponseDto> reports = reportPostService.getAdminAllReportPost(page - 1,
+                size, sortBy, isAsc);
             return ResponseEntity.ok().body(reports);
         } else {
             return ResponseEntity.badRequest().build();
@@ -79,51 +79,56 @@ public class ReportPostController {
 
     @GetMapping("/get/{postid}")
     public ResponseEntity<ReportPostResponseDto> getReport(@PathVariable Long postid,
-        @RequestBody ReportPostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        try {
-            String password = requestDto.getPassword();
-            ReportPostResponseDto reportPostResponseDto = reportPostService.getReport(postid, password, userDetails.getUser());
+        @RequestBody ReportPostRequestDto requestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (isMatches(requestDto, userDetails)) {
+            ReportPostResponseDto reportPostResponseDto = reportPostService.getReport(userDetails.getUser(),postid);
             return ResponseEntity.ok().body(reportPostResponseDto);
-        } catch (IllegalArgumentException e) {
+        } else {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PutMapping("/update/{postid}")
     public ResponseEntity<ReportPostResponseDto> updateReport(
-        @RequestBody ReportPostRequestDto requestDto, @PathVariable Long postid,@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        try {
+        @RequestBody ReportPostRequestDto requestDto, @PathVariable Long postid,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (isMatches(requestDto, userDetails)) {
             ReportPostResponseDto reportPostResponseDto = reportPostService.updateReport(postid,
-                requestDto,userDetails.getUser());
+                requestDto, userDetails.getUser());
             return ResponseEntity.ok().body(reportPostResponseDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
         }
+        return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("delete/{postid}")
     public ResponseEntity<CommonResponseDto> deleteReport(@PathVariable Long postid,
-        @RequestBody ReportPostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        try {
-            reportPostService.deleteReport(postid, requestDto.getPassword(), userDetails.getUser());
+        @RequestBody ReportPostRequestDto requestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (isMatches(requestDto, userDetails)) {
+            reportPostService.deleteReport(postid,userDetails.getUser());
             return ResponseEntity.ok().body(new CommonResponseDto("삭제 성공", HttpStatus.OK.value()));
-        } catch (RejectedExecutionException | IllegalArgumentException ex) {
-            return ResponseEntity.badRequest()
-                .body(new CommonResponseDto("삭제 실패", HttpStatus.BAD_REQUEST.value()));
+        } else {
+            return ResponseEntity.status(402).body(new CommonResponseDto("삭제 실패",HttpStatus.BAD_REQUEST.value()));
         }
     }
 
-    private boolean isValidUser(UserDetailsImpl user, ReportPostRequestDto requestDto) {
+    private boolean isMatches(ReportPostRequestDto requestDto, UserDetailsImpl userDetails) {
+        return passwordEncoder.matches(requestDto.getPassword(),
+            userDetails.getUser().getPassword());
+    }
+    //gets 관련
+    private boolean getsValidUser(UserDetailsImpl user, ReportPostRequestDto requestDto) {
         String encodePassword = user.getPassword();
-        return isValidCredentials(requestDto.getPassword(),encodePassword);
+        return getsIsMatches(requestDto.getPassword(), encodePassword);
     }
 
-    private boolean isValidAdmin(UserDetailsImpl user, ReportPostRequestDto requestDto) {
+    private boolean getsValidAdmin(UserDetailsImpl user, ReportPostRequestDto requestDto) {
         String encodePassword = user.getPassword();
-        return isValidCredentials(requestDto.getPassword(),encodePassword);
+        return getsIsMatches(requestDto.getPassword(), encodePassword);
     }
 
-    private boolean isValidCredentials(String storedPassword, String providedPassword) {
+    private boolean getsIsMatches(String storedPassword, String providedPassword) {
         return passwordEncoder.matches(storedPassword, providedPassword);
     }
 }

@@ -19,18 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReportPostService {
 
     private final ReportPostRepository reportPostRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public ReportPostResponseDto createReport(ReportPostRequestDto requestDto, User user) {
-        if (passwordCheck(user, requestDto.getPassword())) {
-            ReportPost reportPost = new ReportPost(requestDto);
-            reportPost.setUser(user);
+        ReportPost reportPost = new ReportPost(requestDto);
+        reportPost.setUser(user);
 
-            reportPostRepository.save(reportPost);
-            return new ReportPostResponseDto(reportPost);
-        } else {
-            throw new IllegalArgumentException("게시글 생성 오류 발생");
-        }
+        reportPostRepository.save(reportPost);
+        return new ReportPostResponseDto(reportPost);
     }
 
     @Transactional(readOnly = true)
@@ -40,8 +35,7 @@ public class ReportPostService {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<ReportPost> reportPosts;
-        reportPosts = reportPostRepository.findByUser(user, pageable);
+        Page<ReportPost> reportPosts = reportPostRepository.findByUser(user, pageable);
 
         return reportPosts.map(ReportPostResponseDto::new);
     }
@@ -52,66 +46,53 @@ public class ReportPostService {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ReportPost> reportPosts = reportPostRepository.findAll(pageable);
 
-        Page<ReportPost> reportPosts;
-        reportPosts = reportPostRepository.findAll(pageable);
-
-        return reportPosts.map(ReportPostResponseDto::new);
+        if (reportPosts != null) {
+            return reportPosts.map(ReportPostResponseDto::new);
+        } else {
+            throw new IllegalArgumentException("신고 게시글이 존재하지 않습니다");
+        }
     }
 
-    public ReportPostResponseDto getReport(Long postid, String password, User user) {
-        if (passwordCheck(user, password)) {
-            ReportPost reportPost = getReportPost(postid);
+    public ReportPostResponseDto getReport(User user, Long postid) {
+        ReportPost reportPost = getByUserAndId(postid, user);
+        if (reportPost != null) {
             return new ReportPostResponseDto(reportPost);
         } else {
-            throw new IllegalArgumentException("게시글 단건 조회 오류 발생");
+            throw new IllegalArgumentException("신고 게시글이 존재하지 않습니다.");
         }
+
     }
 
     @Transactional
     public ReportPostResponseDto updateReport(Long postid, ReportPostRequestDto requestDto,
         User user) {
-        String password = requestDto.getPassword();
-        if (passwordCheck(user, password)) {
-            ReportPost reportPost = getPost(postid);
-            reportPost.setUser(user);
-            reportPost.setName(requestDto.getName());
-            reportPost.setTitle(requestDto.getTitle());
-            reportPost.setContent(requestDto.getContent());
+        ReportPost reportPost = getByUserAndId(postid, user);
+        reportPost.setUser(user);
+        reportPost.setName(requestDto.getName());
+        reportPost.setTitle(requestDto.getTitle());
+        reportPost.setContent(requestDto.getContent());
+
+        if (reportPost != null) {
             reportPostRepository.save(reportPost);
             return new ReportPostResponseDto(reportPost);
         } else {
-            throw new IllegalArgumentException("비밀번호 오류 발생");
+            throw new IllegalArgumentException("신고 게시글이 존재하지 않습니다");
         }
-    }
-
-    private ReportPost getPost(Long postid) {
-        return reportPostRepository.findById(postid).orElseThrow(
-            () -> new IllegalArgumentException("해당 신고 게시글이 존재하지 않습니다")
-        );
     }
 
     @Transactional
-    public void deleteReport(Long postid, String password, User user) {
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            ReportPost reportPost = getReportPost(postid);
-            if (reportPost != null) {
-                reportPostRepository.deleteById(postid);
-            }
-        } else {
-            throw new IllegalArgumentException("삭제 오류 발생: 비밀번호가 일치하지 않습니다.");
+    public void deleteReport(Long postid, User user) {
+        ReportPost byUserAndId = getByUserAndId(postid, user);
+        if (byUserAndId != null) {
+            reportPostRepository.deleteById(postid);
+        }else{
+            throw new IllegalArgumentException("신고 게시글이 존재하지 않습니다");
         }
     }
 
-    private ReportPost getReportPost(Long postid) {
-        return reportPostRepository.findById(postid).orElseThrow(
-            () -> new IllegalArgumentException("해당 신고 게시글이 존재하지 않습니다.")
-        );
+    private ReportPost getByUserAndId(Long postid, User user) {
+        return reportPostRepository.findByUserAndId(user, postid);
     }
-
-    private boolean passwordCheck(User user, String password) {
-        return passwordEncoder.matches(password, user.getPassword()) && password != null;
-    }
-
-
 }

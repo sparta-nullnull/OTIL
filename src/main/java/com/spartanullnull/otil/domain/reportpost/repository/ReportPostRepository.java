@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface ReportPostRepository extends JpaRepository<ReportPost,Long> {
 
     Page<ReportPost> findByUser(User user, Pageable pageable);
+
+    ReportPost findByUserAndId(User user, Long postid);
 }
