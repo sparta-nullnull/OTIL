@@ -2,10 +2,10 @@ spring:
   profiles:
     default: local
   datasource:
-    url: jdbc:mysql://localhost:3306/nullnull?serverTimezone=UTC&characterEncoding=UTF-8
+    url: ${DB_URL}
     driverClassName: com.mysql.cj.jdbc.Driver
-    username: root
-    password: wo331846!!
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 
   jpa:
     properties:
@@ -19,11 +19,11 @@ spring:
 jwt:
   secret:
     key:
-      1a1b9536d65432b16d4ded7f2814c8e5105ceae7ced4e173b086c564f2efa609d03c8ab84a78492f3175c0ce8ef792d6e55157f34777628f6f55163ef115bfe4
+      ${JWT_KEY}
 
 admin:
   token:
-    11
+    ${ADMIN_TOKEN}
 
 #profile:
 #  image:
@@ -40,3 +40,40 @@ logging:
         type:
           descriptor:
             sql: trace
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  # DATABASE
+  datasource:
+    url: jdbc:mysql://localhost:3306/nullnull?serverTimezone=UTC&characterEncoding=UTF-8
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1026baby
+  # JPA
+  jpa:
+    properties:
+      hibernate:
+        # INIT
+        ddl-auto: create-drop
+        # DEV
+        # ddl-auto: update # Only 'create' when init
+        show_sql: true
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: true
+# JWT
+
+jwt:
+  secret:
+    key:
+      1a1b9536d65432b16d4ded7f2814c8e5105ceae7ced4e173b086c564f2efa609d03c8ab84a78492f3175c0ce8ef792d6e55157f34777628f6f55163ef115bfe4
+
+admin:
+  token:
+    11

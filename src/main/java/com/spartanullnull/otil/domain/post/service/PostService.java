@@ -54,7 +54,7 @@ public class PostService {
         checkAuthority(post, user.getAccountId());
 
         post.modifyPost(requestDto.getTitle(), requestDto.getContent(),
-            categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post));
+            categoryService.getCategoriesByRequest(requestDto.getCategoryList()));
 
         return PostCategoryResponseDto.of(post);
     }
