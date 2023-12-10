@@ -1,16 +1,21 @@
 package com.spartanullnull.otil.domain.user.entity;
 
 import com.spartanullnull.otil.domain.reportpost.entity.ReportPost;
+import com.spartanullnull.otil.domain.user.dto.UserProfileModifyRequestDto;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
+import org.hibernate.annotations.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user")
+@DynamicUpdate
 public class User {
 
     @Id
@@ -61,5 +66,14 @@ public class User {
     public User kakaoIdUpdate(Long kakaoId) {
         this.kakaoId = kakaoId;
         return this;
+    }
+
+    public void modifyByRequest(UserProfileModifyRequestDto userProfileModifyRequestDto,
+        String password, UserRoleEnum role) {
+        this.accountId = userProfileModifyRequestDto.accountId();
+        this.password = password;
+        this.nickname = userProfileModifyRequestDto.nickname();
+        this.email = userProfileModifyRequestDto.email();
+        this.role = role;
     }
 }

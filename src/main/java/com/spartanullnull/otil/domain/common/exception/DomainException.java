@@ -1,6 +1,6 @@
 package com.spartanullnull.otil.domain.common.exception;
 
-import com.spartanullnull.otil.global.exception.*;
+import com.spartanullnull.otil.global.exception.entity.*;
 import lombok.*;
 
 @Getter

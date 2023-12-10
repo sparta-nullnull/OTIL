@@ -38,7 +38,15 @@ public class PostResponseDto extends CommonResponseDto {
             .accountId(post.getUser().getAccountId())
             .title(post.getTitle())
             .content(post.getContent())
-            .categoryList(post.getCategoryList().stream().map(Category::getCategoryName).toList())
+            .categoryList(
+                post.getPostCategories()
+                    .stream()
+                    .filter(postCategory -> postCategory.getPost().equals(post))
+                    .map(PostCategory::getCategory)
+                    .toList()
+                    .stream().map(Category::getCategoryName)
+                    .toList()
+            )
             .createdAt(post.getCreatedAt())
             .build();
     }
