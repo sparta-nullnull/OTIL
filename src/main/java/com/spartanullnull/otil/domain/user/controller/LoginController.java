@@ -2,10 +2,13 @@ package com.spartanullnull.otil.domain.user.controller;
 
 import com.fasterxml.jackson.core.*;
 import com.spartanullnull.otil.domain.user.dto.*;
+import com.spartanullnull.otil.domain.user.entity.User;
+import com.spartanullnull.otil.domain.user.entity.UserRoleEnum;
 import com.spartanullnull.otil.domain.user.service.*;
 import com.spartanullnull.otil.global.dto.*;
 import com.spartanullnull.otil.jwt.*;
 import jakarta.servlet.http.*;
+import javax.security.auth.login.LoginException;
 import lombok.*;
 import org.springframework.http.*;
 import org.springframework.security.core.*;
@@ -22,13 +25,20 @@ public class LoginController {
     private final KakaoService kakaoService;
 
     @PostMapping("/users/login")
-    public ResponseEntity<CommonResponseDto> login(@RequestBody LoginRequestDto requestDto) {
+    public ResponseEntity<ApiResponseDto> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         try {
-            loginService.login(requestDto.getAccountId(), requestDto.getPassword());
-            return ResponseEntity.ok().body(new CommonResponseDto("로그인 성공", HttpStatus.OK.value()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                .body(new CommonResponseDto("로그인 실패", HttpStatus.BAD_REQUEST.value()));
+            loginService.login(requestDto,response);
+
+            ApiResponseDto apiResponseDto = new ApiResponseDto();
+            apiResponseDto.setDate(requestDto.getAccountId());
+            apiResponseDto.setMsg("로그인 성공");
+            apiResponseDto.setStatusCode(HttpStatus.OK.value());
+            return ResponseEntity.ok().body(apiResponseDto);
+        }catch (IllegalArgumentException e){
+            ApiResponseDto apiResponseDto = new ApiResponseDto();
+            apiResponseDto.setMsg("로그인 실패");
+            apiResponseDto.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.badRequest().body(apiResponseDto);
         }
     }
 
