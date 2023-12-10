@@ -21,20 +21,26 @@ public class Post extends BaseTime {
     @JsonIgnore
     @OneToMany(targetEntity = Comment.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Comment> comments = new ArrayList<>();
+
     @JsonIgnore
-    @OneToMany(targetEntity = Category.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Category> categories = new ArrayList<>();
+    @OneToMany(targetEntity = PostCategory.class, mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private final List<PostCategory> postCategories = new ArrayList<>();
+
     @JsonIgnore
     @OneToMany(targetEntity = Recommend.class, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Recommend> recommends = new ArrayList<>();
+
     @Id
     @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String title;
+
     @Column(nullable = false)
     private String content;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -54,9 +60,12 @@ public class Post extends BaseTime {
         this.title = title;
         this.content = content;
     }
-
-    public void modifyPost(PostRequestDto requestDto) {
+  
+    public void modifyPost(PostRequestDto requestDto, List<Category> categories) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
+        List<Category> categoriesOfThisPost = this.postCategories.stream()
+            .map(PostCategory::getCategory)
+            .toList();
     }
 }

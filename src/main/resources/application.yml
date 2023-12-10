@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    default: local
   datasource:
     url: ${DB_URL}
     driverClassName: com.mysql.cj.jdbc.Driver
@@ -38,4 +40,3 @@ logging:
         type:
           descriptor:
             sql: trace
-        

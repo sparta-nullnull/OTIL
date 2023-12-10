@@ -1,4 +1,4 @@
-package com.spartanullnull.otil.global.exception;
+package com.spartanullnull.otil.global.exception.entity;
 
 import com.fasterxml.jackson.annotation.*;
 import java.util.*;

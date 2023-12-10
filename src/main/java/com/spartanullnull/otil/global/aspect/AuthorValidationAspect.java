@@ -12,6 +12,13 @@ import lombok.*;
 import lombok.extern.slf4j.*;
 import org.aspectj.lang.annotation.*;
 
+/**
+ * 모든 도메인에 대해 리소스 요청 시, 로그인 사용자와 소유주 사용자 일치 검증하는 역할의 Aspect
+ *
+ * @author 임지훈
+ * @deprecated 도메인 리소스 검증은 비즈니스와 밀접하다고 판단함. 이러한 이유로 본 클래스는 deprecated 되었음
+ */
+@Deprecated
 @Slf4j(topic = "Check Resource's Author")
 @Aspect
 @RequiredArgsConstructor
@@ -21,18 +28,14 @@ public class AuthorValidationAspect {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-//     비밀번호 수정 :: modifyPassword
-//     프로필 수정 :: modifyUser
-//     아직 merge가 안 되어서 메서드명을 추측해봄
-//    @Pointcut(
-//        "execution(* com.spartanullnull.otil.domain.user.controller.UserController.modifyPassword()) || "
-//            + "execution(* com.spartanullnull.otil.domain.user.controller.UserController.modifyUser())")
-//    private void validateUserPointCut() {
-//    }
+    // 프로필 수정 :: modifyUser
+    @Pointcut("execution(* com.spartanullnull.otil.domain.user.controller.UserProfileController.modifyUserProfile())")
+    private void validateUserPointCut() {
+    }
 
-//     게시글 수정 :: modifyPost
-//     게시글 삭제 :: deletePost
-//     아직 merge가 안 되어서 메서드명을 추측해봄
+    // 게시글 수정 :: modifyPost
+    // 게시글 삭제 :: deletePost
+    // 아직 merge가 안 되어서 메서드명을 추측해봄
 //    @Pointcut(
 //        "execution(* com.spartanullnull.otil.domain.post.controller.PostController.modifyPost()) || "
 //            + "execution(* com.spartanullnull.otil.domain.post.controller.PostController.deletePost())")
@@ -50,10 +53,33 @@ public class AuthorValidationAspect {
     @Before(value = "validateCommentPointCut() && args(postId,commentId,userDetails,..)", argNames = "postId,commentId,userDetails")
     public void validateOwnerOfComment(Long postId, Long commentId, UserDetailsImpl userDetails)
         throws Throwable {
+        try {
+            validateOwnerOfCommentMethod(postId, commentId, userDetails);
+        } catch (Throwable throwable) {
+            log.error("Message of Thrown : " + throwable.getMessage());
+            log.error("Cause of Thrown : " + throwable.getCause());
+            throw throwable;
+        }
+    }
+
+    /**
+     * 로그인한 사용자가 POST와 COMMENT의 주인인지 검증하는 역할의 메서드
+     *
+     * @param postId      post PK 아이디 값
+     * @param commentId   comment PK 아이디 값
+     * @param userDetails 로그인한 사용자
+     */
+    private void validateOwnerOfCommentMethod(Long postId, Long commentId,
+        UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        List<Comment> foundComments = commentRepository.findByIdAndPostIdAndUser(postId, commentId,
-            user);
-        if (foundComments.isEmpty()) {
+        List<Comment> foundComments = commentRepository.findByIdAndPostId(commentId, postId);
+        boolean isNotOwnerOfComment = foundComments.stream()
+            .filter(comment ->
+                comment.getUser().equals(user)
+            )
+            .findAny()
+            .isEmpty();
+        if (isNotOwnerOfComment) {
             throw new NotAuthorOfCommentException("commentId", commentId.toString(),
                 "해당 댓글에 대한 소유주가 아닙니다.");
         }
