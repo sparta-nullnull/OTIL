@@ -61,21 +61,26 @@ public class Post extends BaseTime {
         this.content = content;
     }
 
-    public void modifyPost(PostRequestDto requestDto, List<Category> categories) {
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
-        List<Category> categoriesOfThisPost = this.postCategories.stream()
-            .map(PostCategory::getCategory)
-            .toList();
+    public void modifyPost(String title, String content, List<Category> categoriesByRequest) {
+        this.title = title;
+        this.content = content;
+        removeCategories();
+        categoriesByRequest.forEach(this::addCategory);
+    }
 
-//        categories.forEach(
-//            category ->
-//                this.postCategories.add(
-//                    PostCategory.builder()
-//                        .category(category)
-//                        .post(this)
-//                        .build()
-//                )
-//        );
+    private void removeCategories() {
+        if (!postCategories.isEmpty()) {
+            postCategories.forEach(postCategory ->
+                postCategory.getCategory()
+                    .getPostCategories()
+                    .remove(postCategory)
+            );
+        }
+        postCategories.clear();
+    }
+
+    private void addCategory(Category category) {
+        PostCategory postCategory = PostCategory.of(this, category);
+        postCategories.add(postCategory);
     }
 }

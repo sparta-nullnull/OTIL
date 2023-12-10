@@ -20,19 +20,7 @@ public class PostService {
 
     private final CategoryService categoryService;
     private final PostRepository postRepository;
-
-    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
-        Post post = postRepository.save(Post.builder()
-            .user(user)
-            .title(requestDto.getTitle())
-            .content(requestDto.getContent())
-            .build());
-
-        List<Category> categories =
-            categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post);
-
-        return PostResponseDto.of(post, categories);
-    }
+    private final PostCategoryRepository postCategoryRepository;
 
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
@@ -47,13 +35,25 @@ public class PostService {
             .collect(Collectors.toList());
     }
 
-    public PostResponseDto modifyPost(Long postId, User user,
-        PostRequestDto requestDto) {
+    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+        Post post = postRepository.save(Post.builder()
+            .user(user)
+            .title(requestDto.getTitle())
+            .content(requestDto.getContent())
+            .build());
+
+        List<Category> categories =
+            categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post);
+
+        return PostResponseDto.of(post, categories);
+    }
+
+    public PostResponseDto modifyPost(Long postId, User user, PostRequestDto requestDto) {
         Post post = findById(postId);
         checkAuthority(post, user.getAccountId());
-        List<Category> categories = categoryService.buildAndSaveCategoriesByRequest(
-            requestDto.getCategoryList(), post);
-        post.modifyPost(requestDto, categories);
+
+        post.modifyPost(requestDto.getTitle(), requestDto.getContent(),
+            categoryService.buildAndSaveCategoriesByRequest(requestDto.getCategoryList(), post));
 
         return PostResponseDto.of(post);
     }
